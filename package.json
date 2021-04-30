@@ -1,0 +1,27 @@
+{
+    "name": "chrome-remote-debugger",
+    "version": "0.0.1",
+    "description": "Debugger any website by CDP",
+    "main": "lib/app.js",
+    "author": "mnichangxin@163.com",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "dev": "nodemon server/app.js --exec babel-node --presets @babel/preset-env"
+    },
+    "dependencies": {
+        "chrome-devtools-frontend": "^1.0.877414",
+        "koa": "^2.13.1",
+        "koa-bodyparser": "^4.3.0",
+        "koa-logger": "^3.2.1",
+        "koa-router": "^10.0.0",
+        "socket.io": "^4.0.1",
+        "ws": "^7.4.5"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.13.16",
+        "@babel/node": "^7.13.13",
+        "@babel/preset-env": "^7.13.15",
+        "nodemon": "^2.0.7"
+    }
+}
