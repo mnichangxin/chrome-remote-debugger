@@ -36,6 +36,5 @@ export default dir => {
 
     return async (ctx, next) => {
         await router.routes()(ctx, next)
-        next()
     }
 }

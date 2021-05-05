@@ -4,12 +4,30 @@
         <title>Test Page</title>
     </head>
     <body>
-        <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
-        <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"
+        ></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.bootcdn.net/ajax/libs/socket.io/4.0.1/socket.io.min.js"
+        ></script>
         <script>
-            // var socket = io('ws://localhost:8080')
-            // socket.emit('message', 'hhhh')
-            $.ajax('http://localhost:8080/register')
+            $.ajax('http://localhost:8080/register', {
+                type: 'POST',
+                data: {
+                    title: 'Test Page'
+                }
+            })
+                .then(res => {
+                    if (res.errCode === 0) {
+                        var socket = io('ws://localhost:8080')
+                        socket.emit('log', 'connect success...')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         </script>
     </body>
 </html>

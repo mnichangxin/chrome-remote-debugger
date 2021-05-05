@@ -19,15 +19,14 @@ export default (root, pathname) => {
                 const fileExtName = path.extname(fileName)
                 const file = fs.readFileSync(path.resolve(root, fileName))
 
-                ctx.response.status = 200
-                ctx.response.type = fileExtName.replace('.', '')
-                ctx.response.body = file
+                ctx.type = fileExtName.replace('.', '')
+                ctx.body = file
             } else {
                 await next()
             }
         } catch (err) {
-            ctx.response.status = 404
-            ctx.response.body = 'Not Found'
+            ctx.status = 404
+            ctx.body = 'Not Found'
         }
     }
 }
