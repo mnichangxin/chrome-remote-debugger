@@ -8,7 +8,7 @@ export const register = ctx => {
     ctx.set('Access-Control-Allow-Origin', '*')
     ctx.set('Access-Control-Allow-Credentials', true)
     ctx.type = 'json'
-    CDP.getInstance().addPage(ctx)
+    CDP.getInstance().addPage(ctx.request.body)
     ctx.body = JSON.stringify({
         errCode: 0,
         errStr: 'Register page success',
@@ -19,13 +19,13 @@ export const register = ctx => {
 export const json = ctx => {
     const pages = CDP.getInstance().getPages()
     const jsonData = pages.map(page => {
-        const { pid, url, hostname, description, metadata } = page
+        const { pid, title, url, hostname } = page
         const devtoolsPath = `${hostname}/inspect/${pid}`
 
         return {
+            pid,
+            title,
             url: url.href,
-            description,
-            metadata,
             devtoolsFrontendUrl: `${hostname}/app/inspector.html?ws=${devtoolsPath}`,
             webSocketDebuggerUrl: 'ws://' + devtoolsPath
         }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Test Page</title>
+        <title>TestPage</title>
     </head>
     <body>
         <script
@@ -16,7 +16,10 @@
             $.ajax('http://localhost:8080/register', {
                 type: 'POST',
                 data: {
-                    title: 'Test Page'
+                    pid: 'qazws134xedc12ewkda',
+                    title: document.title,
+                    url: location.href,
+                    hostname: location.hostname
                 }
             })
                 .then(res => {

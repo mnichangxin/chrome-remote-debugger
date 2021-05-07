@@ -1,6 +1,7 @@
 import path from 'path'
 import http from 'http'
 import Koa from 'koa'
+import KoaBodyParser from 'koa-bodyparser'
 import Logger from 'koa-logger'
 import IO from 'socket.io'
 import StaticFile from './middlewares/staticFile'
@@ -9,9 +10,11 @@ import CDP from './cdp'
 
 const createApp = (port = 8080) => {
     const app = new Koa()
+    const koaBodyParser = new KoaBodyParser()
     const logger = new Logger()
     const controller = new Controller()
 
+    app.use(koaBodyParser)
     app.use(logger)
     app.use(controller)
     app.use(
