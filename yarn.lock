@@ -1114,10 +1114,10 @@ chokidar@^3.2.2:
   optionalDependencies:
     fsevents "~2.3.1"
 
-chrome-devtools-frontend@^1.0.877414:
-  version "1.0.877414"
-  resolved "https://registry.nlark.com/chrome-devtools-frontend/download/chrome-devtools-frontend-1.0.877414.tgz#3ceec258ceea09da271c0b22c1a663ba5b61d456"
-  integrity sha1-PO7CWM7qCdonHAsiwaZjulth1FY=
+chrome-devtools-frontend@1.0.707746:
+  version "1.0.707746"
+  resolved "http://192.168.14.11:8888/chrome-devtools-frontend/-/chrome-devtools-frontend-1.0.707746.tgz#4578f4491f05d0b8f38f58f881b97bb39539d266"
+  integrity sha1-RXj0SR8F0Ljzj1j4gbl7s5U50mY=
 
 ci-info@^2.0.0:
   version "2.0.0"

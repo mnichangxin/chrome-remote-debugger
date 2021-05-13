@@ -1,9 +1,82 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Chrome 远程 debugger 工具</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            .page-list-container {
+                padding: 20px;
+            }
+            .page-list {
+                margin-top: 10px;
+                padding: 20px 10px;
+                border-top: 1px solid #ececec;
+                list-style: none;
+            }
+            .page-list a {
+                display: inline-block;
+                color: #141414;
+                text-decoration: none;
+            }
+            .page-item {
+                padding: 10px;
+                border-radius: 5px;
+            }
+            .page-item:hover {
+                background: #d6f1ff;
+            }
+            .page-item + .page-item {
+                margin-top: 20px;
+            }
+            .page-url {
+                margin-top: 5px;
+            }
+        </style>
+        <script
+            type="text/javascript"
+            src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"
+        ></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.bootcdn.net/ajax/libs/socket.io/4.0.1/socket.io.min.js"
+        ></script>
     </head>
     <body>
-        <p>待开发</p>
+        <div class="container">
+            <section class="page-list-container">
+                <h3>可调试页面列表：</h3>
+                <ul class="page-list"></ul>
+            </section>
+        </div>
+        <script>
+            function renderPageList(pageList) {
+                var renderStr = ''
+                pageList.forEach(function(page) {
+                    renderStr += '<li class="page-item">\
+                        <a href="' + page.devtoolsFrontendUrl + '" target="_blank">\
+                            <p class="page-title">' + page.title +'</p>\
+                            <p class="page-url">' + page.url + '</p>\
+                        </a>\
+                    </li>'
+                })
+                $('.page-list').html(renderStr)
+            }
+
+            $.ajax('/json').then(function(res) {
+                if (res.errCode === 0) {
+                    renderPageList(res.data || [])
+                }
+            })
+
+            var socket = io('ws://localhost:8080/json')
+            socket.on('json', function(data) {
+                renderPageList(data || [])
+            })
+        </script>
     </body>
 </html>

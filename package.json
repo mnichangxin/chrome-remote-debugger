@@ -10,7 +10,7 @@
         "dev": "nodemon server/app.js --exec babel-node"
     },
     "dependencies": {
-        "chrome-devtools-frontend": "^1.0.877414",
+        "chrome-devtools-frontend": "1.0.707746",
         "koa": "^2.13.1",
         "koa-bodyparser": "^4.3.0",
         "koa-logger": "^3.2.1",

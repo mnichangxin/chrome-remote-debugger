@@ -23,9 +23,10 @@ const createApp = (port = 8080) => {
                 __dirname,
                 '../node_modules/chrome-devtools-frontend/front_end'
             ),
-            '/app'
+            '/devtools'
         )
     )
+    app.use(StaticFile(path.resolve(__dirname, '../views'), '/view'))
     app.use(StaticFile(path.resolve(__dirname, '../test'), '/test'))
 
     const server = http.createServer(app.callback())
@@ -34,18 +35,13 @@ const createApp = (port = 8080) => {
             origin: '*'
         }
     })
-    const cdp = new CDP(ioServer)
+    const cdp = CDP.getInstance(ioServer)
 
-    ioServer.on('connection', socket => {
-        socket.on('log', args => {
-            console.log(args)
-        })
-    })
-    server.on('upgrade', cdp.upgradeWssSocket)
+    server.on('upgrade', cdp.upgradeWssSocket.bind(cdp))
 
     server.listen(port)
 
-    console.log(`Server start at port: ${port}...`)
+    console.log(`server start at port: ${port}...`)
 }
 
 createApp()

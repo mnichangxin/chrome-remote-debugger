@@ -17,7 +17,11 @@ export default (root, pathname) => {
                 const splitArr = reqPath.split('/')
                 const fileName = splitArr[splitArr.length - 1] || 'index.html'
                 const fileExtName = path.extname(fileName)
-                const file = fs.readFileSync(path.resolve(root, fileName))
+                const filePath = path.resolve(
+                    root,
+                    reqPath.replace(`/${pathname}/`, '')
+                )
+                const file = fs.readFileSync(filePath)
 
                 ctx.type = fileExtName.replace('.', '')
                 ctx.body = file
