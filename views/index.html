@@ -75,6 +75,8 @@
 
             var socket = io('ws://localhost:8080/json')
             socket.on('json', function(data) {
+                console.log(data)
+
                 renderPageList(data || [])
             })
         </script>

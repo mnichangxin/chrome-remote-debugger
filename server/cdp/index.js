@@ -8,6 +8,7 @@ export default class CDP {
     }
     constructor(ioServer) {
         this._ioServer = ioServer
+        this._ioJsonServer = ioServer.of('/json')
         this._pages = []
     }
     newPage(params) {
@@ -29,7 +30,7 @@ export default class CDP {
         this.emitJson()
     }
     emitJson() {
-        this._ioServer.of('/json').emit('json', this.jsonForPages())
+        this._ioJsonServer.emit('json', this.jsonForPages())
     }
     jsonForPages() {
         return this._pages.map(page => {
