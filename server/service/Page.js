@@ -24,17 +24,31 @@ export default class Page {
         return () => {
             socket.on('disconnect', this.ioDisconnect.bind(this))
             SocketManage.getInstance().addPage(this)
-            console.log(`[pid: ${this._pid}] connect ioServer...`)
+            console.log(`[pid: ${this._pid}] connect to ioServer...`)
         }
     }
     ioDisconnect() {
         this._ioServer.removeAllListeners()
         SocketManage.getInstance().removePage(this)
-        console.log(`[pid: ${this._pid}] disconnect ioServer...`)
+        console.log(`[pid: ${this._pid}] disconnect to ioServer...`)
+    }
+    devtoolsConnect(ws) {
+        console.log(`[pid: ${this._pid}] connect to Chrome DevTools...`)
+
+        ws.on('open', () => {
+            console.log(`[pid: ${this._pid}] open ws..`)
+        })
+        ws.on('close', this.devtoolsDisconnect.bind(this))
+    }
+    devtoolsDisconnect() {
+        console.log(`[pid: ${this._pid}] disconnect to Chrome DevTools...`)
     }
     handleUpgrade(req, socket, head) {
-        this._wss.handleUpgrade(req, socket, head, ws => {
-            console.log(`[pid: ${this._pid}] upgrade...`)
-        })
+        this._wss.handleUpgrade(
+            req,
+            socket,
+            head,
+            this.devtoolsConnect.bind(this)
+        )
     }
 }
