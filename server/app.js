@@ -6,7 +6,7 @@ import Logger from 'koa-logger'
 import IO from 'socket.io'
 import StaticFile from './middlewares/staticFile'
 import Controller from './middlewares/controller'
-import CDP from './cdp'
+import SocketManage from './service/SocketManage'
 
 const createApp = (port = 8080) => {
     const app = new Koa()
@@ -35,7 +35,7 @@ const createApp = (port = 8080) => {
             origin: '*'
         }
     })
-    const cdp = CDP.getInstance(ioServer)
+    const cdp = SocketManage.getInstance(ioServer)
 
     server.on('upgrade', cdp.upgradeWssSocket.bind(cdp))
 

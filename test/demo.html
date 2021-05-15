@@ -18,12 +18,13 @@
                 data: {
                     pid: 'qazws134xedc12ewkda',
                     title: document.title,
-                    url: location.href
+                    url: location.href,
+                    wsHost: 'localhost:8080'
                 }
             })
                 .then(res => {
                     if (res.errCode === 0) {
-                        var socket = io('ws://localhost:8080/page/qazws134xedc12ewkda')
+                        var socket = io('ws://localhost:8080/devtools/page/qazws134xedc12ewkda')
                         socket.emit('ioConnect')
                     }
                 })

@@ -1,14 +1,15 @@
 import WebSocket from 'ws'
-import CDP from './index'
+import SocketManage from './SocketManage'
 
 export default class Page {
     constructor(ioServer, params) {
         this._pid = ''
         this._title = ''
         this._url = ''
+        this._wssHost = ''
         this._isConnectedToDevtools = false
         this._domains = []
-        this._ioServer = ioServer.of(`/page/${params.pid}`)
+        this._ioServer = ioServer.of(`/devtools/page/${params.pid}`)
         this._wss = new WebSocket.Server({ noServer: true })
 
         Object.keys(params).forEach(key => {
@@ -22,18 +23,18 @@ export default class Page {
     ioConnect(socket) {
         return () => {
             socket.on('disconnect', this.ioDisconnect.bind(this))
-            CDP.getInstance().addPage(this)
+            SocketManage.getInstance().addPage(this)
             console.log(`[pid: ${this._pid}] connect ioServer...`)
         }
     }
     ioDisconnect() {
         this._ioServer.removeAllListeners()
-        CDP.getInstance().removePage(this)
+        SocketManage.getInstance().removePage(this)
         console.log(`[pid: ${this._pid}] disconnect ioServer...`)
     }
     handleUpgrade(req, socket, head) {
         this._wss.handleUpgrade(req, socket, head, ws => {
-            console.log(`[pid: ${this._pid}] upgrade`)
+            console.log(`[pid: ${this._pid}] upgrade...`)
         })
     }
 }

@@ -1,10 +1,11 @@
-import Page from './page'
+import Page from './Page'
 
-export default class CDP {
+export default class SocketManage {
     static instance = null
     static getInstance(ioServer) {
-        if (!CDP.instance) CDP.instance = new CDP(ioServer)
-        return CDP.instance
+        if (!SocketManage.instance)
+            SocketManage.instance = new SocketManage(ioServer)
+        return SocketManage.instance
     }
     constructor(ioServer) {
         this._ioServer = ioServer
@@ -34,9 +35,13 @@ export default class CDP {
     }
     jsonForPages() {
         return this._pages.map(page => {
-            const { _pid: pid, _title: title, _url: url } = page
-            const host = new URL(url).host
-            const devtoolsPath = `${host}/inspect/${pid}`
+            const {
+                _pid: pid,
+                _title: title,
+                _url: url,
+                _wsHost: wsHost
+            } = page
+            const devtoolsPath = `${wsHost}/devtools/page/${pid}`
             return {
                 pid,
                 title,
@@ -47,14 +52,16 @@ export default class CDP {
         })
     }
     upgradeWssSocket(req, socket, head) {
-        // try {
-        //     this._pages.forEach(page => {
-        //         if (new URL(req._url).pathname === `/inspect/${page._pid}`) {
-        //             return page.handleUpgrade(req, socket, head)
-        //         }
-        //     })
-        // } catch (e) {
-        //     console.log(e)
-        // }
+        try {
+            this._pages.forEach(page => {
+                if (req.url === `/devtools/page/${page._pid}`) {
+                    return page.handleUpgrade(req, socket, head)
+                } else {
+                    socket.destroy()
+                }
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
 }
