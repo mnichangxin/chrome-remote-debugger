@@ -35,8 +35,8 @@ export default class Page {
     devtoolsConnect(ws) {
         console.log(`[pid: ${this._pid}] connect to Chrome DevTools...`)
 
-        ws.on('open', () => {
-            console.log(`[pid: ${this._pid}] open ws..`)
+        ws.on('message', msg => {
+            console.log(msg)
         })
         ws.on('close', this.devtoolsDisconnect.bind(this))
     }

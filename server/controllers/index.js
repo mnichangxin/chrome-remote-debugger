@@ -11,7 +11,7 @@ export const register = ctx => {
     SocketManage.getInstance().newPage(ctx.request.body)
     ctx.body = JSON.stringify({
         errCode: 0,
-        errStr: 'register page success',
+        errStr: 'success',
         data: null
     })
 }
