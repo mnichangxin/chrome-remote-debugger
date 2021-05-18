@@ -34,10 +34,7 @@ export default class Page {
     }
     devtoolsConnect(ws) {
         console.log(`[pid: ${this._pid}] connect to Chrome DevTools...`)
-
-        ws.on('message', msg => {
-            console.log(msg)
-        })
+        ws.on('message', msg => this.handleReceiveMsg(ws, JSON.parse(msg)))
         ws.on('close', this.devtoolsDisconnect.bind(this))
     }
     devtoolsDisconnect() {
@@ -50,5 +47,16 @@ export default class Page {
             head,
             this.devtoolsConnect.bind(this)
         )
+    }
+    handleReceiveMsg(ws, msg) {
+        const { id, method, params } = msg
+        let domain = undefined
+        let property = undefined
+        if (typeof method === 'string') {
+            const domainArr = method.split('.')
+            domain = domainArr[0]
+            property = domainArr[1]
+        }
+        ws.send(JSON.stringify({ id, result: {} }))
     }
 }
