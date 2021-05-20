@@ -1,5 +1,6 @@
 import WebSocket from 'ws'
 import SocketManage from './SocketManage'
+import CDP from '../cdp'
 
 export default class Page {
     constructor(ioServer, params) {
@@ -9,8 +10,11 @@ export default class Page {
         this._wssHost = ''
         this._isConnectedToDevtools = false
         this._domains = []
+        this._cdp = null
         this._ioServer = ioServer.of(`/devtools/page/${params.pid}`)
         this._wss = new WebSocket.Server({ noServer: true })
+
+        this.id = 0
 
         Object.keys(params).forEach(key => {
             this[`_${key}`] = params[key] || ''
@@ -34,6 +38,68 @@ export default class Page {
     }
     devtoolsConnect(ws) {
         console.log(`[pid: ${this._pid}] connect to Chrome DevTools...`)
+        this._cdp = new CDP(ws)
+        this._cdp.send(
+            JSON.stringify({
+                id: ++this.id,
+                method: 'Page.frameStartedLoading',
+                params: {
+                    frameId: 'qazws134xedc12ewkda'
+                }
+            })
+        )
+        this._cdp.send(
+            JSON.stringify({
+                method: 'Page.frameNavigated',
+                params: {
+                    frame: {
+                        id: 'qazws134xedc12ewkda',
+                        loaderId: 'qazws134xedc12ewkda0',
+                        mimeType: 'text/html',
+                        securityOrigin: '/',
+                        url:
+                            'file:///Users/lichangxin/Project/chrome-remote-debugger/test/demo.html'
+                    }
+                }
+            })
+        )
+        this._cdp.send(
+            JSON.stringify({
+                id: ++this.id,
+                method: 'Network.enable'
+            })
+        )
+        this._cdp.send(
+            JSON.stringify({
+                id: ++this.id,
+                method: 'Page.enable'
+            })
+        )
+        this._cdp.send(
+            JSON.stringify({
+                id: ++this.id,
+                method: 'Runtime.enable'
+            })
+        )
+        this._cdp.send(
+            JSON.stringify({
+                id: ++this.id,
+                method: 'Debugger.enable'
+            })
+        )
+        this._cdp.send(
+            JSON.stringify({
+                id: ++this.id,
+                method: 'DOM.enable'
+            })
+        )
+        this._cdp.send(
+            JSON.stringify({
+                id: ++this.id,
+                method: 'CSS.enable'
+            })
+        )
+
         ws.on('message', msg => this.handleReceiveMsg(ws, JSON.parse(msg)))
         ws.on('close', this.devtoolsDisconnect.bind(this))
     }
@@ -57,6 +123,13 @@ export default class Page {
             domain = domainArr[0]
             property = domainArr[1]
         }
-        ws.send(JSON.stringify({ id, result: {} }))
+
+        // ws.send(
+        //     JSON.stringify({
+        //         id,
+        //         method,
+        //         result: {}
+        //     })
+        // )
     }
 }
