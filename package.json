@@ -2,10 +2,9 @@
     "name": "chrome-remote-debugger",
     "version": "0.0.1",
     "description": "Debugger any website by CDP",
-    "main": "lib/app.js",
+    "main": "server/app.js",
     "author": "mnichangxin@163.com",
     "license": "MIT",
-    "private": true,
     "scripts": {
         "dev": "nodemon server/app.js --exec babel-node"
     },

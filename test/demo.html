@@ -2,38 +2,16 @@
 <html>
     <head>
         <title>TestPage</title>
-        <script
-            type="text/javascript"
-            src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"
-        ></script>
-        <script
-            type="text/javascript"
-            src="https://cdn.bootcdn.net/ajax/libs/socket.io/4.0.1/socket.io.min.js"
-        ></script>
     </head>
     <body>
         <div class="container">
             <div class="test-box"></div>
         </div>
+        <script src="/client/dist/crd.umd.js"></script>
         <script>
-            $.ajax('http://localhost:8080/register', {
-                type: 'POST',
-                data: {
-                    pid: 'qazws134xedc12ewkda',
-                    title: document.title,
-                    url: location.href,
-                    wsHost: 'localhost:8080'
-                }
-            })
-                .then(res => {
-                    if (res.errCode === 0) {
-                        var socket = io('ws://localhost:8080/devtools/page/qazws134xedc12ewkda')
-                        socket.emit('ioConnect')
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+            new CRD({
+                // wsHost: '//localhost:9222'
+            }).init()
         </script>
     </body>
 </html>

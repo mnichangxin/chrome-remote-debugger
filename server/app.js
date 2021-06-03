@@ -8,7 +8,7 @@ import StaticFile from './middlewares/staticFile'
 import Controller from './middlewares/controller'
 import SocketManage from './service/SocketManage'
 
-const createApp = (port = 8080) => {
+const createApp = (port = 9222) => {
     const app = new Koa()
     const koaBodyParser = new KoaBodyParser()
     const logger = new Logger()
@@ -26,6 +26,7 @@ const createApp = (port = 8080) => {
             '/devtools'
         )
     )
+    app.use(StaticFile(path.resolve(__dirname, '../client'), '/client'))
     app.use(StaticFile(path.resolve(__dirname, '../views'), '/view'))
     app.use(StaticFile(path.resolve(__dirname, '../test'), '/test'))
 

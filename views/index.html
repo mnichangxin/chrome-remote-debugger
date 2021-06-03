@@ -73,7 +73,7 @@
                 }
             })
 
-            var socket = io('ws://localhost:8080/json')
+            var socket = io('ws://localhost:9222/json')
             socket.on('json', function(data) {
                 renderPageList(data || [])
             })

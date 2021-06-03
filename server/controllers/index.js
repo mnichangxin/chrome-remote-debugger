@@ -10,7 +10,7 @@ export const register = ctx => {
     ctx.type = 'json'
     SocketManage.getInstance().newPage(ctx.request.body)
     ctx.body = JSON.stringify({
-        errCode: 0,
+        errNo: 0,
         errStr: 'success',
         data: null
     })
@@ -20,7 +20,7 @@ export const json = ctx => {
     const jsonData = SocketManage.getInstance().jsonForPages()
     ctx.type = 'json'
     ctx.body = JSON.stringify({
-        errCode: 0,
+        errNo: 0,
         errStr: 'success',
         data: jsonData
     })

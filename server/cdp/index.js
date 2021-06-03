@@ -11,7 +11,7 @@ export default class CDP {
     Target() {
         return Target
     }
-    send(obj) {
-        return this.ws.send(obj)
+    send(args) {
+        return this.ws.send(args)
     }
 }
