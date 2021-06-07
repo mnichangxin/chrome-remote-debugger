@@ -6082,7 +6082,6 @@
 
   var xhr = xhr$1.exports;
 
-  var _excluded = ["url", "method", "formType"];
   var json2FormUrl = function json2FormUrl(jsonData) {
     var formUrl = '';
     Object.keys(jsonData).forEach(function (key, i) {
@@ -6091,6 +6090,23 @@
     });
     return formUrl;
   };
+  var getWsUrlOrigin = function getWsUrlOrigin(wsHost) {
+    return wsHost.replace(/^((https?|ws):\/\/|\/\/)/, '');
+  };
+  var randomString = function randomString(e) {
+    e = e || 32;
+    var t = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+    var a = t.length;
+    var n = '';
+
+    for (var i = 0; i < e; i++) {
+      n += t.charAt(Math.floor(Math.random() * a));
+    }
+
+    return n;
+  };
+
+  var _excluded = ["url", "method", "formType"];
   var request = function request(_ref) {
     var url = _ref.url,
         method = _ref.method,
@@ -6120,26 +6136,27 @@
       return [err, undefined];
     });
   };
-  var randomString = function randomString(e) {
-    e = e || 32;
-    var t = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
-    var a = t.length;
-    var n = '';
+  var generatePid = function generatePid() {
+    var cache = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    var currentScript = document.currentScript;
+    var pid = randomString();
 
-    for (var i = 0; i < e; i++) {
-      n += t.charAt(Math.floor(Math.random() * a));
+    if (cache) {
+      var storageKey = "__crd_".concat(location.origin).concat(location.pathname);
+      var storageValue = localStorage.getItem(storageKey);
+
+      if (storageValue) {
+        pid = storageValue;
+      } else {
+        localStorage.setItem(storageKey, pid);
+      }
     }
 
-    return n;
-  };
-  var generatePid = function generatePid() {
-    var currentScript = document.currentScript;
-
-    if (currentScript && currentScript.dataset.pid) {
+    if (!cache && currentScript && currentScript.dataset.pid) {
       return currentScript.dataset.pid;
     }
 
-    return randomString();
+    return pid;
   };
 
   function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
@@ -6162,43 +6179,44 @@
       key: "inspectorPage",
       value: function () {
         var _inspectorPage = _asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-          var requestData, _yield$to, _yield$to2, err, res;
+          var url, requestData, _yield$to, _yield$to2, err, res;
 
           return regenerator.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
+                  url = "//".concat(getWsUrlOrigin(this.wsHost), "/register");
                   requestData = {
                     pid: this.pid,
                     title: this.title,
                     url: this.url,
                     wsHost: this.wsHost
                   };
-                  _context.next = 3;
+                  _context.next = 4;
                   return to(request({
-                    url: "".concat(this.wsHost, "/register"),
+                    url: url,
                     method: 'post',
                     formType: true,
                     data: requestData
                   }));
 
-                case 3:
+                case 4:
                   _yield$to = _context.sent;
                   _yield$to2 = _slicedToArray(_yield$to, 2);
                   err = _yield$to2[0];
                   res = _yield$to2[1];
 
                   if (!err) {
-                    _context.next = 9;
+                    _context.next = 10;
                     break;
                   }
 
                   throw err;
 
-                case 9:
+                case 10:
                   if (res.errNo === 0) this.connectSocket();
 
-                case 10:
+                case 11:
                 case "end":
                   return _context.stop();
               }
@@ -6215,7 +6233,7 @@
     }, {
       key: "connectSocket",
       value: function connectSocket() {
-        var wsUrlOrigin = this.wsHost.replace(/^((https?|ws):\/\/|\/\/)/, '');
+        var wsUrlOrigin = getWsUrlOrigin(this.wsHost);
         var socket = io("ws://".concat(wsUrlOrigin, "/devtools/page/").concat(this.pid));
         this.initSocketEvent(socket);
       }

@@ -1,5 +1,6 @@
 import io from 'socket.io-client'
 import { request, to, generatePid } from '../lib/utils/common'
+import { getWsUrlOrigin } from '../lib/utils/helper'
 
 export default class RemoteDebugger {
     constructor(options) {
@@ -10,6 +11,7 @@ export default class RemoteDebugger {
     }
 
     async inspectorPage() {
+        const url = `//${getWsUrlOrigin(this.wsHost)}/register`
         const requestData = {
             pid: this.pid,
             title: this.title,
@@ -18,7 +20,7 @@ export default class RemoteDebugger {
         }
         const [err, res] = await to(
             request({
-                url: `${this.wsHost}/register`,
+                url,
                 method: 'post',
                 formType: true,
                 data: requestData
@@ -29,7 +31,7 @@ export default class RemoteDebugger {
     }
 
     connectSocket() {
-        const wsUrlOrigin = this.wsHost.replace(/^((https?|ws):\/\/|\/\/)/, '')
+        const wsUrlOrigin = getWsUrlOrigin(this.wsHost)
         const socket = io(`ws://${wsUrlOrigin}/devtools/page/${this.pid}`)
         this.initSocketEvent(socket)
     }

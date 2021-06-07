@@ -1,15 +1,5 @@
 import xhr from 'xhr'
-
-export const json2FormUrl = jsonData => {
-    let formUrl = ''
-
-    Object.keys(jsonData).forEach((key, i) => {
-        if (i > 0) formUrl += '&'
-        formUrl += `${key}=${jsonData[key]}`
-    })
-
-    return formUrl
-}
+import { json2FormUrl, randomString } from './helper'
 
 export const request = ({ url, method, formType, ...options }) =>
     new Promise((resolve, reject) => {
@@ -36,23 +26,23 @@ export const to = (promise, errExt) =>
             return [err, undefined]
         })
 
-export const randomString = e => {
-    e = e || 32
-    const t = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
-    const a = t.length
-    let n = ''
-
-    for (let i = 0; i < e; i++) n += t.charAt(Math.floor(Math.random() * a))
-
-    return n
-}
-
-export const generatePid = () => {
+export const generatePid = (cache = true) => {
     const currentScript = document.currentScript
+    let pid = randomString()
 
-    if (currentScript && currentScript.dataset.pid) {
+    if (cache) {
+        const storageKey = `__crd_${location.origin}${location.pathname}`
+        const storageValue = localStorage.getItem(storageKey)
+
+        if (storageValue) {
+            pid = storageValue
+        } else {
+            localStorage.setItem(storageKey, pid)
+        }
+    }
+    if (!cache && currentScript && currentScript.dataset.pid) {
         return currentScript.dataset.pid
     }
 
-    return randomString()
+    return pid
 }
