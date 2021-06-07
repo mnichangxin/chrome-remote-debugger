@@ -68,7 +68,7 @@
             }
 
             $.ajax('/json').then(function(res) {
-                if (res.errCode === 0) {
+                if (res.errNo === 0) {
                     renderPageList(res.data || [])
                 }
             })

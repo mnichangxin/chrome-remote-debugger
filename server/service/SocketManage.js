@@ -17,8 +17,10 @@ export default class SocketManage {
 
         if (this._pages.findIndex(page => page._pid === pid) > -1) {
             console.log(`[pid: ${pid}] already register`)
+            return pid
         } else {
             new Page(this._ioServer, params)
+            return null
         }
     }
     addPage(page) {
