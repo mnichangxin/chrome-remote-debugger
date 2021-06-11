@@ -1,9 +1,13 @@
 import io from 'socket.io-client'
-import { request, to, generatePid } from '../lib/utils/common'
-import { getWsUrlOrigin } from '../lib/utils/helper'
+import domains from './domains'
+import dispatch from './dispatch'
+import { request, to, generatePid } from './utils/common'
+import { getWsUrlOrigin } from './utils/helper'
 
 export default class RemoteDebugger {
     constructor(options) {
+        this.domains = {}
+        this.initDomains()
         options = this.mergeOptions(options)
         Object.keys(options).forEach(key => {
             this[key] = options[key]
@@ -30,28 +34,20 @@ export default class RemoteDebugger {
         if (res.errNo === 0) this.connectSocket()
     }
 
+    initDomains() {
+        for (let [name, domain] of Object.entries(domains)) {
+            this.domains[name] = domain
+        }
+    }
+    initSocketEvent(socket) {
+        socket.emit('connected')
+        socket.on('cdp', dispatch.call(socket, this.domains))
+    }
+
     connectSocket() {
         const wsUrlOrigin = getWsUrlOrigin(this.wsHost)
         const socket = io(`ws://${wsUrlOrigin}/devtools/page/${this.pid}`)
         this.initSocketEvent(socket)
-    }
-
-    initSocketEvent(socket) {
-        socket.emit('ioConnect')
-        socket.emit('result', {
-            method: 'Runtime.executionContextCreated',
-            params: {
-                context: {
-                    auxData: {
-                        frameId: '1.0',
-                        isDefault: true
-                    },
-                    id: 1,
-                    name: document.title,
-                    origin: 'https://www.baidu.com'
-                }
-            }
-        })
     }
 
     mergeOptions(options) {

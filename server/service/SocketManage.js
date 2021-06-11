@@ -8,41 +8,36 @@ export default class SocketManage {
         return SocketManage.instance
     }
     constructor(ioServer) {
-        this._ioServer = ioServer
-        this._ioJsonServer = ioServer.of('/json')
-        this._pages = []
+        this.ioServer = ioServer
+        this.ioJsonServer = ioServer.of('/json')
+        this.pages = []
     }
     newPage(params) {
         const pid = params.pid || ''
 
-        if (this._pages.findIndex(page => page._pid === pid) > -1) {
+        if (this.pages.findIndex(page => page.pid === pid) > -1) {
             console.log(`[pid: ${pid}] already register`)
             return pid
         } else {
-            new Page(this._ioServer, params)
+            new Page(this.ioServer, params)
             return null
         }
     }
     addPage(page) {
-        this._pages.push(page)
+        this.pages.push(page)
         this.emitJson()
     }
     removePage(page) {
-        const pageIndex = this._pages.indexOf(page)
-        this._pages.splice(pageIndex, 1)
+        const pageIndex = this.pages.indexOf(page)
+        this.pages.splice(pageIndex, 1)
         this.emitJson()
     }
     emitJson() {
-        this._ioJsonServer.emit('json', this.jsonForPages())
+        this.ioJsonServer.emit('json', this.jsonForPages())
     }
     jsonForPages() {
-        return this._pages.map(page => {
-            const {
-                _pid: pid,
-                _title: title,
-                _url: url,
-                _wsHost: wsHost
-            } = page
+        return this.pages.map(page => {
+            const { pid, title, url, wsHost } = page
             const devtoolsPath = `${wsHost}/devtools/page/${pid}`
             return {
                 pid,
@@ -55,8 +50,8 @@ export default class SocketManage {
     }
     upgradeWssSocket(req, socket, head) {
         try {
-            this._pages.forEach(page => {
-                if (req.url === `/devtools/page/${page._pid}`) {
+            this.pages.forEach(page => {
+                if (req.url === `/devtools/page/${page.pid}`) {
                     return page.handleUpgrade(req, socket, head)
                 } else {
                     socket.destroy()

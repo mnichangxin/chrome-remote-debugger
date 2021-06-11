@@ -6,9 +6,11 @@ export const index = ctx => {
 
 export const register = ctx => {
     const pid = SocketManage.getInstance().newPage(ctx.request.body)
+
     ctx.set('Access-Control-Allow-Origin', '*')
     ctx.set('Access-Control-Allow-Credentials', true)
     ctx.type = 'json'
+
     if (pid) {
         ctx.body = JSON.stringify({
             errNo: 1,
