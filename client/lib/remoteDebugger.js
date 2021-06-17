@@ -2,6 +2,7 @@ import io from 'socket.io-client'
 import domains from './domains'
 import dispatch from './dispatch'
 import { request, to, generatePid } from './utils/common'
+import { setNodeIds } from './utils/dom'
 import { getWsUrlOrigin } from './utils/helper'
 
 export default class RemoteDebugger {
@@ -12,6 +13,7 @@ export default class RemoteDebugger {
         Object.keys(options).forEach(key => {
             this[key] = options[key]
         })
+        this.loadHandler()
     }
 
     async inspectorPage() {
@@ -57,6 +59,19 @@ export default class RemoteDebugger {
             url: location.href,
             wsHost: '//localhost:9222',
             ...options
+        }
+    }
+
+    loadHandler() {
+        document.onreadystatechange = () => {
+            if (document.readyState === 'complete') {
+                this.domains.Runtime.executionContextCreated.call(this)
+                this.domains.Debugger.scriptParsed.call(this)
+                this.domains.Page.frameStoppedLoading.call(this)
+                this.domains.Page.loadEventFired.call(this)
+                this.domains.DOM.documentUpdated.call(this)
+                setNodeIds()
+            }
         }
     }
 

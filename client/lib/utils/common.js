@@ -1,6 +1,12 @@
 import xhr from 'xhr'
 import { json2FormUrl, randomString } from './helper'
 
+const flatten = arr =>
+    arr.reduce(
+        (acc, val) => acc.concat(Array.isArray(val) ? flatten(val) : val),
+        []
+    )
+
 export const request = ({ url, method, formType, ...options }) =>
     new Promise((resolve, reject) => {
         if (formType) {
@@ -45,4 +51,61 @@ export const generatePid = (cache = true) => {
     }
 
     return pid
+}
+
+export const getAttributes = namedNodeMap => {
+    if (!namedNodeMap) {
+        return
+    }
+    const attributes = namedNodeMap
+        .toArray()
+        .map(attr => [attr.name, attr.value])
+    return flatten(attributes)
+}
+
+export function getDriverOrigin() {
+    /**
+     * check if executed by launcher script
+     */
+    if (document.currentScript && document.currentScript.src) {
+        return `http://${document.currentScript.src.split('/').slice(2, 3)[0]}`
+    }
+
+    if (
+        document.currentScript &&
+        document.currentScript.getAttribute('data-proxy-host')
+    ) {
+        return `http://${document.currentScript.getAttribute(
+            'data-proxy-host'
+        )}`
+    }
+
+    if (window._proxyHost) {
+        return window._proxyHost
+    }
+
+    return 'http://localhost:9222'
+}
+
+export const getTitle = () => {
+    let title = ''
+    const titleTag = document.querySelector('title')
+    if (titleTag) {
+        title = titleTag.text
+    }
+    return title
+}
+
+export const getDescription = () => {
+    let description = ''
+    const metaTags = document.querySelectorAll('meta')
+    for (let i = 0; i < metaTags.length; ++i) {
+        const tag = metaTags[i]
+        if (tag.getAttribute('name') !== 'description') {
+            continue
+        }
+        description = tag.getAttribute('content')
+    }
+
+    return description
 }
