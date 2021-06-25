@@ -1,6 +1,12 @@
 import { scriptParsed } from './debugger'
 import ObjectStore from '../models/ObjectStore'
-import { getConsoleArg, getStacktrace, getFakeError, getObjectProperties, callFn } from '../utils/runtime'
+import {
+    getConsoleArg,
+    getStacktrace,
+    getFakeError,
+    getObjectProperties,
+    callFn
+} from '../utils/runtime'
 
 export const scripts = []
 
@@ -11,7 +17,7 @@ export const scripts = []
 /**
  * overwrite console
  */
-export function overwriteConsole (console) {
+export function overwriteConsole(console) {
     let consoleMethods = Object.keys(Object.getPrototypeOf(console))
 
     /**
@@ -37,12 +43,12 @@ export function overwriteConsole (console) {
 
         const origFn = console[type].bind(console)
         const self = this
-        con[type] = function __fakeConsole (...args) {
-            self.execute('Runtime.consoleAPICalled', {
+        con[type] = function __fakeConsole(...args) {
+            self.send('Runtime.consoleAPICalled', {
                 args: args.map(getConsoleArg),
                 executionContext: self.executionContextId,
                 stackTrace: { callFrames: getStacktrace() },
-                timestamp: (new Date()).getTime(),
+                timestamp: new Date().getTime(),
                 type
             })
             origFn.apply(self, args)
@@ -58,7 +64,7 @@ export function overwriteConsole (console) {
 /**
  * Tells inspected instance to run if it was waiting for debugger to attach.
  */
-export function runIfWaitingForDebugger () {
+export function runIfWaitingForDebugger() {
     return {} // NYI
 }
 
@@ -69,7 +75,7 @@ export function runIfWaitingForDebugger () {
  * @return {ScriptId}                    Id of the script.
  * @return {ExceptionDetails}            Exception details
  */
-export function compileScript ({ expression }, context = window) {
+export function compileScript({ expression }, context = window) {
     const { error, scriptId } = callFn.call(context, expression)
 
     if (error && error.wasThrown) {
@@ -113,9 +119,16 @@ export function compileScript ({ expression }, context = window) {
  *                                                    by user in the UI.
  * @return {RemoteObject|ExceptionDetails}                       Evauluation result or exception details
  */
-export function evaluate ({
-    awaitPromise, contextId, expression, generatePreview, includeCommandLineAPI,
-    objectGroup, returnByValue, silent, userGesture
+export function evaluate({
+    awaitPromise,
+    contextId,
+    expression,
+    generatePreview,
+    includeCommandLineAPI,
+    objectGroup,
+    returnByValue,
+    silent,
+    userGesture
 }) {
     /**
      * evaluate is only supported for console executions
@@ -156,7 +169,8 @@ export function evaluate ({
     }
 
     if (objectGroup === 'completion' && !returnByValue) {
-        const constructorName = result && result.constructor ? result.constructor.name : undefined
+        const constructorName =
+            result && result.constructor ? result.constructor.name : undefined
         return {
             result: {
                 className: constructorName,
@@ -172,13 +186,18 @@ export function evaluate ({
      * in order to not send debugger stacktraces
      */
     if (result instanceof Error) {
-        return { result: getConsoleArg(getFakeError(result), scriptId, returnByValue) }
+        return {
+            result: getConsoleArg(getFakeError(result), scriptId, returnByValue)
+        }
     }
 
     return { result: getConsoleArg(result, scriptId, returnByValue) }
 }
 
-export function awaitPromise ({ promiseObjectId, returnByValue, generatePreview }, id) {
+export function awaitPromise(
+    { promiseObjectId, returnByValue, generatePreview },
+    id
+) {
     const promise = ObjectStore.getByObjectId(promiseObjectId)
 
     if (typeof promise.then !== 'function') {
@@ -187,27 +206,32 @@ export function awaitPromise ({ promiseObjectId, returnByValue, generatePreview 
         return { result: errorResult }
     }
 
-    promise.then((payload) => {
-        let result = { result: getConsoleArg(payload, promiseObjectId, returnByValue) }
-        this.emit('result', { id, result })
-    }, (e) => {
-        const errorResult = getConsoleArg(e, null, returnByValue)
-        this.emit('result', {
-            id,
-            result: {
-                result: errorResult,
-                exceptionDetails: {
-                    columnNumber: 0,
-                    lineNumber: 0,
-                    scriptId: promiseObjectId,
-                    exception: errorResult,
-                    exceptionId: promiseObjectId,
-                    stackTrace: { callFrames: getStacktrace(e) },
-                    text: e.constructor.name
-                }
+    promise.then(
+        payload => {
+            let result = {
+                result: getConsoleArg(payload, promiseObjectId, returnByValue)
             }
-        })
-    })
+            this.emit('result', { id, result })
+        },
+        e => {
+            const errorResult = getConsoleArg(e, null, returnByValue)
+            this.emit('result', {
+                id,
+                result: {
+                    result: errorResult,
+                    exceptionDetails: {
+                        columnNumber: 0,
+                        lineNumber: 0,
+                        scriptId: promiseObjectId,
+                        exception: errorResult,
+                        exceptionId: promiseObjectId,
+                        stackTrace: { callFrames: getStacktrace(e) },
+                        text: e.constructor.name
+                    }
+                }
+            })
+        }
+    )
 }
 
 /**
@@ -220,12 +244,20 @@ export function awaitPromise ({ promiseObjectId, returnByValue, generatePreview 
  * @return {RemoteObject}                         evelalutaion result
  * @return {ExceptionDetails}                     exception details
  */
-export function callFunctionOn ({ arguments: args, functionDeclaration, objectId }) {
+export function callFunctionOn({
+    arguments: args,
+    functionDeclaration,
+    objectId
+}) {
     const scope = ObjectStore.getByObjectId(objectId)
 
-    compileScript.call(this, {
-        expression: `(${functionDeclaration}).apply(this)`
-    }, scope)
+    compileScript.call(
+        this,
+        {
+            expression: `(${functionDeclaration}).apply(this)`
+        },
+        scope
+    )
 
     const result = ObjectStore.getLastObject()
     const scriptId = ObjectStore.getLastScriptId()
@@ -244,10 +276,12 @@ export function callFunctionOn ({ arguments: args, functionDeclaration, objectId
         }
     }
 
-    return { result: {
-        type: typeof result,
-        value: result
-    } }
+    return {
+        result: {
+            type: typeof result,
+            value: result
+        }
+    }
 }
 
 /**
@@ -255,7 +289,7 @@ export function callFunctionOn ({ arguments: args, functionDeclaration, objectId
  *
  * @param  {String} objectGroup  Symbolic object group name.
  */
-export function releaseObjectGroup ({ objectGroup }) {
+export function releaseObjectGroup({ objectGroup }) {
     return {}
 }
 
@@ -274,7 +308,7 @@ export function releaseObjectGroup ({ objectGroup }) {
  * @return {RemoteObject}      evelalutaion result
  * @return {ExceptionDetails}  exception details
  */
-export function getProperties ({ accessorPropertiesOnly, objectId }) {
+export function getProperties({ accessorPropertiesOnly, objectId }) {
     /**
      * not able to detect accessors via JS yet
      */
@@ -296,7 +330,7 @@ export function getProperties ({ accessorPropertiesOnly, objectId }) {
  *
  * @param {RemoteObjectId} objectId  Identifier of the object to release.
  */
-export function releaseObject ({ objectId }) {
+export function releaseObject({ objectId }) {
     return {} // NYI
 }
 
@@ -309,16 +343,19 @@ export function releaseObject ({ objectId }) {
  *
  * @return {ExecutionContextDescription} A newly created execution contex.
  */
-export function executionContextCreated () {
-    this.execute('Runtime.executionContextCreated', {
-        context: {
-            auxData: {
-                frameId: this.frameId,
-                isDefault: true
-            },
-            id: this.executionContextId,
-            name: document.title,
-            origin: window.location.origin
+export function executionContextCreated() {
+    this.send({
+        method: 'Runtime.executionContextCreated',
+        params: {
+            context: {
+                auxData: {
+                    frameId: this.frameId,
+                    isDefault: true
+                },
+                id: this.executionContextId,
+                name: document.title,
+                origin: window.location.origin
+            }
         }
     })
 }

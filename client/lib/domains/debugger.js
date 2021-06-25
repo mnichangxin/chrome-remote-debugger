@@ -8,7 +8,7 @@
  *
  * @param  {String} state  Pause on exceptions mode. Allowed values: none, uncaught, all.
  */
-export function setPauseOnExceptions () {
+export function setPauseOnExceptions() {
     return {}
 }
 
@@ -18,7 +18,7 @@ export function setPauseOnExceptions () {
  * @param  {Integer} maxDepth  Maximum depth of async call stacks. Setting to 0 will effectively
  *                             disable collecting async call stacks (default).
  */
-export function setAsyncCallStackDepth () {
+export function setAsyncCallStackDepth() {
     return {}
 }
 
@@ -30,16 +30,20 @@ export function setAsyncCallStackDepth () {
  * @param  {String[]} patterns  Array of regexps that will be used to check script url for
  *                              blackbox state.
  */
-export function setBlackboxPatterns () {
+export function setBlackboxPatterns() {
     return {}
 }
 
-export function getScriptSource ({ scriptId }) {
-    const script = [].slice.apply(document.querySelectorAll('script')).filter(
-        (node) => node._nodeId && scriptId === node._nodeId.toString())[0]
+export function getScriptSource({ scriptId }) {
+    const script = [].slice
+        .apply(document.querySelectorAll('script'))
+        .filter(node => node._nodeId && scriptId === node._nodeId.toString())[0]
 
     if (!script) {
-        return { scriptSource: '', error: `no script found with id ${scriptId}` }
+        return {
+            scriptSource: '',
+            error: `no script found with id ${scriptId}`
+        }
     }
 
     /**
@@ -65,66 +69,79 @@ export function getScriptSource ({ scriptId }) {
  *
  * @param {String} script  script that was executed (e.g. by console)
  */
-export function scriptParsed (script) {
+export function scriptParsed(script) {
     if (!script) {
         const scripts = document.querySelectorAll('script')
 
         for (const script of scripts) {
-            const hasSourceURL = Boolean(script.attributes && script.attributes.src && script.attributes.src.nodeValue)
-            this.execute('Debugger.scriptParsed', {
-                startColumn: 0,
-                startLine: 0,
-                executionContextId: this.executionContextId,
-                executionContextAuxData: {
-                    frameId: this.frameId,
-                    isDefault: true
-                },
-                hasSourceURL,
-                isLiveEdit: false,
-                scriptId: script._nodeId ? script._nodeId.toString() : null,
-                sourceMapURL: '',
-                url: hasSourceURL ? script.attributes.src.nodeValue : ''
+            const hasSourceURL = Boolean(
+                script.attributes &&
+                    script.attributes.src &&
+                    script.attributes.src.nodeValue
+            )
+            this.send({
+                method: 'Debugger.scriptParsed',
+                params: {
+                    startColumn: 0,
+                    startLine: 0,
+                    executionContextId: this.executionContextId,
+                    executionContextAuxData: {
+                        frameId: this.frameId,
+                        isDefault: true
+                    },
+                    hasSourceURL,
+                    isLiveEdit: false,
+                    scriptId: script._nodeId ? script._nodeId.toString() : null,
+                    sourceMapURL: '',
+                    url: hasSourceURL ? script.attributes.src.nodeValue : ''
+                }
             })
         }
         return
     }
 
-    this.execute('Debugger.scriptParsed', {
-        startColumn: 0,
-        endColumn: 0,
-        startLine: 0,
-        endLine: 0,
-        executionContextId: this.executionContextId,
-        executionContextAuxData: {
-            frameId: this.frameId,
-            isDefault: true
-        },
-        scriptId: script.scriptId.toString(),
-        hasSourceURL: false,
-        isLiveEdit: false,
-        sourceMapURL: '',
-        url: ''
+    this.send({
+        method: 'Debugger.scriptParsed',
+        params: {
+            startColumn: 0,
+            endColumn: 0,
+            startLine: 0,
+            endLine: 0,
+            executionContextId: this.executionContextId,
+            executionContextAuxData: {
+                frameId: this.frameId,
+                isDefault: true
+            },
+            scriptId: script.scriptId.toString(),
+            hasSourceURL: false,
+            isLiveEdit: false,
+            sourceMapURL: '',
+            url: ''
+        }
     })
 }
 
 /**
  * Fired when virtual machine fails to parse the script.
  */
-export function scriptFailedToParse ({ scriptId, expression }) {
-    this.execute('Debugger.scriptParsed', {
-        startColumn: 0,
-        endColumn: expression.length,
-        startLine: 0,
-        endLine: 0,
-        executionContextId: this.executionContextId,
-        executionContextAuxData: {
-            frameId: this.frameId,
-            isDefault: true
-        },
-        scriptId: scriptId.toString(),
-        hasSourceURL: false,
-        isLiveEdit: false,
-        sourceMapURL: '',
-        url: ''
+export function scriptFailedToParse({ scriptId, expression }) {
+    this.send({
+        method: 'Debugger.scriptParsed',
+        params: {
+            startColumn: 0,
+            endColumn: expression.length,
+            startLine: 0,
+            endLine: 0,
+            executionContextId: this.executionContextId,
+            executionContextAuxData: {
+                frameId: this.frameId,
+                isDefault: true
+            },
+            scriptId: scriptId.toString(),
+            hasSourceURL: false,
+            isLiveEdit: false,
+            sourceMapURL: '',
+            url: ''
+        }
     })
 }

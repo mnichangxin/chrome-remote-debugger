@@ -1,36 +1,72 @@
 /**
+ * ---- Page Domain ----
+ */
+
+/**
  * Methods
  */
 
-export const addScriptToEvaluateOnNewDocument = () => ({})
-export const bringToFront = () => ({})
-export const captureScreenshot = () => ({})
-export const createIsolatedWorld = () => ({})
-export const disable = () => ({})
-export const enable = () => ({})
-export const getAppManifest = () => ({})
-export const getFrameTree = () => ({})
-export const getLayoutMetrics = () => ({})
-export const getNavigationHistory = () => ({})
-export const handleJavaScriptDialog = () => ({})
-export const navigate = ({ url }) => {
+export function addScriptToEvaluateOnNewDocument() {
+    return {}
+}
+export function bringToFront() {
+    return {}
+}
+export function captureScreenshot() {
+    return {}
+}
+export function createIsolatedWorld() {
+    return {}
+}
+export function disable() {
+    return {}
+}
+export function enable() {
+    return {}
+}
+export function getAppManifest() {
+    return {}
+}
+export function getFrameTree() {
+    return {}
+}
+export function getLayoutMetrics() {
+    return {}
+}
+export function getNavigationHistory() {
+    return {}
+}
+export function handleJavaScriptDialog() {
+    return {}
+}
+export function navigate({ url }) {
     window.localtion.assign(url)
     return {}
 }
-export const navigateToHistoryEntry = ({ entryId }) => {
+export function navigateToHistoryEntry({ entryId }) {
     window.history.go(entryId)
     return {}
 }
-export const printToPDF = () => ({})
-export const reload = ({ ignoreCache }) => {
+export function printToPDF() {
+    return {}
+}
+export function reload({ ignoreCache }) {
     window.location.reload(Boolean(ignoreCache))
     return {}
 }
-export const removeScriptToEvaluateOnNewDocument = () => ({})
-export const resetNavigationHistory = () => ({})
-export const setDocumentContent = () => ({})
-export const stopLoading = () => ({})
-export const getResourceTree = () => {
+export function removeScriptToEvaluateOnNewDocument() {
+    return {}
+}
+export function resetNavigationHistory() {
+    return {}
+}
+export function setDocumentContent() {
+    return {}
+}
+export function stopLoading() {
+    return {}
+}
+export function getResourceTree() {
     return {
         frameTree: {
             childFrames: [],
@@ -51,9 +87,15 @@ export const getResourceTree = () => {
  * Events
  */
 
-// export const frameStoppedLoading = () => {
-//     this.execute('Page.frameStoppedLoading', { frameId: this.frameId })
-// }
-// export const loadEventFired = () => {
-//     this.execute('Page.loadEventFired', { timestamp: 649314.52695 })
-// }
+export function frameStoppedLoading() {
+    this.send({
+        method: 'Page.frameStoppedLoading',
+        params: { frameId: this.frameId }
+    })
+}
+export function loadEventFired() {
+    this.send({
+        method: 'Page.loadEventFired',
+        params: { timestamp: 649314.52695 }
+    })
+}

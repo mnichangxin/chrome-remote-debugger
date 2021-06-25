@@ -1,6 +1,6 @@
 export default function(domains) {
-    return CDPObject => {
-        const { id, params, method } = CDPObject
+    return CDP => {
+        const { id, params, method } = CDP
         const domainArr = method.split('.')
         const [domain, subDomain] = domainArr
 

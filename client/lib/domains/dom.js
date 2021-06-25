@@ -19,7 +19,7 @@ const inspectedNodes = []
  *                           the subtree (default is false). (experimental)
  * @return {root}            Resulting node.
  */
-export function getDocument ({ depth = 1, pierce }) {
+export function getDocument({ depth = 1, pierce }) {
     const root = new Node(document)
     getDomNodes(root, depth, pierce)
     return { root }
@@ -36,7 +36,7 @@ export function getDocument ({ depth = 1, pierce }) {
  * @param  {boolean} pierce  Whether or not iframes and shadow roots should be traversed when returning
  *                           the subtree (default is false). (experimental)
  */
-export function requestChildNodes ({ nodeId, depth = 1, pierce }) {
+export function requestChildNodes({ nodeId, depth = 1, pierce }) {
     const root = Node.getNode(nodeId)
 
     if (!root) {
@@ -44,9 +44,12 @@ export function requestChildNodes ({ nodeId, depth = 1, pierce }) {
     }
 
     getDomNodes(root, depth, pierce)
-    this.execute('DOM.setChildNodes', {
-        parentId: nodeId,
-        nodes: root.children
+    this.send({
+        method: 'DOM.setChildNodes',
+        params: {
+            parentId: nodeId,
+            nodes: root.children
+        }
     })
 
     return {}
@@ -57,7 +60,7 @@ export function requestChildNodes ({ nodeId, depth = 1, pierce }) {
  * @param  {NodeId} nodeId  Id of the node to get markup for.
  * @return {String}         Outer HTML markup.
  */
-export function getOuterHTML ({ nodeId }) {
+export function getOuterHTML({ nodeId }) {
     const node = Node.getNode(nodeId)
 
     if (!node) {
@@ -73,7 +76,7 @@ export function getOuterHTML ({ nodeId }) {
  * @param {NodeId} nodeId    Id of the node to set markup for.
  * @param {String} outerHTML Outer HTML markup to set.
  */
-export function setOuterHTML ({ nodeId, outerHTML }) {
+export function setOuterHTML({ nodeId, outerHTML }) {
     const root = Node.getNode(nodeId)
 
     if (!root) {
@@ -87,12 +90,17 @@ export function setOuterHTML ({ nodeId, outerHTML }) {
     /**
      * remove origin node
      */
-    this.execute('DOM.childNodeRemoved', {
-        nodeId: root.nodeId,
-        parentNodeId: elem.parentNode._nodeId
+    this.send({
+        method: 'DOM.childNodeRemoved',
+        params: {
+            nodeId: root.nodeId,
+            parentNodeId: elem.parentNode._nodeId
+        }
     })
 
-    let lastNodeId = elem.previousElementSibling ? elem.previousElementSibling._nodeId : elem.parentNode._nodeId
+    let lastNodeId = elem.previousElementSibling
+        ? elem.previousElementSibling._nodeId
+        : elem.parentNode._nodeId
     for (let i = 0; i < dom.documentElement.childNodes.length; i++) {
         const el = dom.documentElement.childNodes[i]
 
@@ -100,18 +108,21 @@ export function setOuterHTML ({ nodeId, outerHTML }) {
         const node = new Node(el)
 
         elem.parentNode.insertBefore(el.cloneNode(), elem)
-        this.execute('DOM.childNodeInserted', {
-            node: {
-                attributes: node.getFlattenedAttributes(),
-                childNodeCount: node.childNodeCount,
-                localName: node.localName,
-                nodeId: node.nodeId,
-                nodeName: node.nodeName,
-                nodeType: node.nodeType,
-                nodeValue: node.nodeValue
-            },
-            parentNodeId: elem.parentNode._nodeId,
-            previousNodeId: lastNodeId
+        this.send({
+            method: 'DOM.childNodeInserted',
+            params: {
+                node: {
+                    attributes: node.getFlattenedAttributes(),
+                    childNodeCount: node.childNodeCount,
+                    localName: node.localName,
+                    nodeId: node.nodeId,
+                    nodeName: node.nodeName,
+                    nodeType: node.nodeType,
+                    nodeValue: node.nodeValue
+                },
+                parentNodeId: elem.parentNode._nodeId,
+                previousNodeId: lastNodeId
+            }
         })
         lastNodeId = el._nodeId
     }
@@ -125,7 +136,7 @@ export function setOuterHTML ({ nodeId, outerHTML }) {
  * @param  {nodeId} nodeId Id of the element to remove attribute from.
  * @param  {String} name   Name of the attribute to remove.
  */
-export function removeAttribute ({ nodeId, name }) {
+export function removeAttribute({ nodeId, name }) {
     const node = Node.getNode(nodeId)
 
     if (!node) {
@@ -141,7 +152,7 @@ export function removeAttribute ({ nodeId, name }) {
  * Removes node with given id.
  * @param  {NodeId} nodeId  Id of the node to remove.
  */
-export function removeNode ({ nodeId }) {
+export function removeNode({ nodeId }) {
     const node = Node.getNode(nodeId)
 
     if (!node) {
@@ -157,7 +168,7 @@ export function removeNode ({ nodeId }) {
 /**
  * Hides DOM node highlight.
  */
-export function hideHighlight () {
+export function hideHighlight() {
     const highlightNode = document.getElementById(HIGHLIGHT_NODE_ID)
 
     if (highlightNode) {
@@ -173,7 +184,7 @@ export function hideHighlight () {
  * @param  {highlightConfig}        highlightConfig  A descriptor for the highlight appearance.
  * @param  {NodeId}                 nodeId           Identifier of the node to highlight.
  */
-export function highlightNode ({ highlightConfig, nodeId, objectId }) {
+export function highlightNode({ highlightConfig, nodeId, objectId }) {
     let node
 
     if (typeof nodeId === 'number') {
@@ -217,19 +228,19 @@ export function highlightNode ({ highlightConfig, nodeId, objectId }) {
 
     const computedStyle = window.getComputedStyle(node)
     const rect = node.getBoundingClientRect()
-    const {
-        contentColor,
-        paddingColor,
-        marginColor
-    } = highlightConfig
+    const { contentColor, paddingColor, marginColor } = highlightConfig
 
     /**
      * node to highlight element
      */
     const elemNode = document.createElement('div')
     elemNode.style.backgroundColor = getColorFormatted(contentColor)
-    elemNode.style.width = `${rect.width - parseInt(computedStyle.paddingRight, 10) - parseInt(computedStyle.paddingLeft, 10)}px`
-    elemNode.style.height = `${rect.height - parseInt(computedStyle.paddingTop, 10) - parseInt(computedStyle.paddingBottom, 10)}px`
+    elemNode.style.width = `${rect.width -
+        parseInt(computedStyle.paddingRight, 10) -
+        parseInt(computedStyle.paddingLeft, 10)}px`
+    elemNode.style.height = `${rect.height -
+        parseInt(computedStyle.paddingTop, 10) -
+        parseInt(computedStyle.paddingBottom, 10)}px`
 
     /**
      * node to highlight padding
@@ -261,8 +272,12 @@ export function highlightNode ({ highlightConfig, nodeId, objectId }) {
      * set position styles
      */
     marginNode.style.position = 'absolute'
-    marginNode.style.left = `${rect.left - parseInt(computedStyle.marginLeft, 10) + window.scrollX}px`
-    marginNode.style.top = `${rect.top - parseInt(computedStyle.marginTop, 10) + window.scrollY}px`
+    marginNode.style.left = `${rect.left -
+        parseInt(computedStyle.marginLeft, 10) +
+        window.scrollX}px`
+    marginNode.style.top = `${rect.top -
+        parseInt(computedStyle.marginTop, 10) +
+        window.scrollY}px`
     marginNode.style.zIndex = 10000
     container.appendChild(marginNode)
 
@@ -275,7 +290,7 @@ export function highlightNode ({ highlightConfig, nodeId, objectId }) {
  * @param {NodeId} nodeId  Id of the node to set value for.
  * @param {String} value   New node's value.
  */
-export function setNodeValue ({ nodeId, value }) {
+export function setNodeValue({ nodeId, value }) {
     const root = Node.getNode(nodeId)
 
     /**
@@ -285,7 +300,10 @@ export function setNodeValue ({ nodeId, value }) {
     root.node._characterDataModified = true
 
     root.node.nodeValue = value
-    this.execute('DOM.characterDataModified', { nodeId, value })
+    this.send({
+        method: 'DOM.characterDataModified',
+        params: { nodeId, value }
+    })
     return {}
 }
 
@@ -296,7 +314,7 @@ export function setNodeValue ({ nodeId, value }) {
  *
  * @param  {NodeId} nodeId   DOM node id to be accessible by means of $x command line API.
  */
-export function setInspectedNode ({ nodeId }) {
+export function setInspectedNode({ nodeId }) {
     const root = Node.getNode(nodeId)
 
     if (!root) {
@@ -313,7 +331,7 @@ export function setInspectedNode ({ nodeId }) {
      * for some reasons Webpack can't deal with having $ (surrounded by single quotes) in
      * interpreted code that is why we ignore eslint in that line
      */
-    inspectedNodes.forEach((elem, i) => (window["$" + i] = elem)) // eslint-disable-line quotes
+    inspectedNodes.forEach((elem, i) => (window['$' + i] = elem)) // eslint-disable-line quotes
 
     return {}
 }
@@ -327,7 +345,7 @@ export function setInspectedNode ({ nodeId }) {
  * @param {String} text    Attribute name to replace with new attributes derived from text in case text
  *                         parsed successfully.
  */
-export function setAttributesAsText ({ nodeId, name, text }) {
+export function setAttributesAsText({ nodeId, name, text }) {
     const root = Node.getNode(nodeId)
 
     if (!root) {
@@ -347,8 +365,9 @@ export function setAttributesAsText ({ nodeId, name, text }) {
         root.node.removeAttribute(name)
     }
 
-    fakeElem.childNodes[0].attributes.toArray().forEach(
-        (attr) => root.node.setAttribute(attr.name, attr.value))
+    fakeElem.childNodes[0].attributes
+        .toArray()
+        .forEach(attr => root.node.setAttribute(attr.name, attr.value))
 
     return {}
 }
@@ -356,7 +375,7 @@ export function setAttributesAsText ({ nodeId, name, text }) {
 /**
  * Marks last undoable state. (EXPERIMENTAL)
  */
-export function markUndoableState () {
+export function markUndoableState() {
     return {}
 }
 
@@ -366,13 +385,16 @@ export function markUndoableState () {
  * series of setChildNodes notifications.
  * @return {Runtime.RemoteObjectId}  object id where node is stored
  */
-export function requestNode ({ objectId }) {
+export function requestNode({ objectId }) {
     const node = ObjectStore.getByObjectId(objectId)
     const root = new Node(node)
 
-    this.execute('DOM.setChildNodes', {
-        parentId: root.nodeId,
-        nodes: root.children
+    this.send({
+        method: 'DOM.setChildNodes',
+        params: {
+            parentId: root.nodeId,
+            nodes: root.children
+        }
     })
 
     return { nodeId: root.nodeId }
@@ -385,7 +407,7 @@ export function requestNode ({ objectId }) {
  * @param {String} objectGroup     Symbolic group name that can be used to release multiple objects.
  * @return {Runtime.RemoteObject}  JavaScript object wrapper for given node.
  */
-export function resolveNode ({ nodeId }) {
+export function resolveNode({ nodeId }) {
     const root = Node.getNode(nodeId)
 
     if (!root) {
@@ -402,7 +424,7 @@ export function resolveNode ({ nodeId }) {
  * @param  {nodeId}   nodeId  Id of the node to retrieve attibutes for.
  * @return {String[]}         An interleaved array of node attribute names and values.
  */
-export function getAttributes ({ nodeId }) {
+export function getAttributes({ nodeId }) {
     const root = Node.getNode(nodeId)
 
     if (!root) {
@@ -419,8 +441,8 @@ export function getAttributes ({ nodeId }) {
 /**
  * Fired when Document has been totally updated. Node ids are no longer valid.
  */
-export function documentUpdated () {
-    this.execute('DOM.documentUpdated', {})
+export function documentUpdated() {
+    this.send({ method: 'DOM.documentUpdated', params: {} })
 }
 
 export { enabled, name, HIGHLIGHT_NODE_ID }

@@ -6801,9 +6801,12 @@
     }
 
     getDomNodes(root, depth);
-    this.execute('DOM.setChildNodes', {
-      parentId: nodeId,
-      nodes: root.children
+    this.send({
+      method: 'DOM.setChildNodes',
+      params: {
+        parentId: nodeId,
+        nodes: root.children
+      }
     });
     return {};
   }
@@ -6848,9 +6851,12 @@
      * remove origin node
      */
 
-    this.execute('DOM.childNodeRemoved', {
-      nodeId: root.nodeId,
-      parentNodeId: elem.parentNode._nodeId
+    this.send({
+      method: 'DOM.childNodeRemoved',
+      params: {
+        nodeId: root.nodeId,
+        parentNodeId: elem.parentNode._nodeId
+      }
     });
     var lastNodeId = elem.previousElementSibling ? elem.previousElementSibling._nodeId : elem.parentNode._nodeId;
 
@@ -6859,18 +6865,21 @@
       setNodeIds(el);
       var node = new Node(el);
       elem.parentNode.insertBefore(el.cloneNode(), elem);
-      this.execute('DOM.childNodeInserted', {
-        node: {
-          attributes: node.getFlattenedAttributes(),
-          childNodeCount: node.childNodeCount,
-          localName: node.localName,
-          nodeId: node.nodeId,
-          nodeName: node.nodeName,
-          nodeType: node.nodeType,
-          nodeValue: node.nodeValue
-        },
-        parentNodeId: elem.parentNode._nodeId,
-        previousNodeId: lastNodeId
+      this.send({
+        method: 'DOM.childNodeInserted',
+        params: {
+          node: {
+            attributes: node.getFlattenedAttributes(),
+            childNodeCount: node.childNodeCount,
+            localName: node.localName,
+            nodeId: node.nodeId,
+            nodeName: node.nodeName,
+            nodeType: node.nodeType,
+            nodeValue: node.nodeValue
+          },
+          parentNodeId: elem.parentNode._nodeId,
+          previousNodeId: lastNodeId
+        }
       });
       lastNodeId = el._nodeId;
     }
@@ -7048,9 +7057,12 @@
 
     root.node._characterDataModified = true;
     root.node.nodeValue = value;
-    this.execute('DOM.characterDataModified', {
-      nodeId: nodeId,
-      value: value
+    this.send({
+      method: 'DOM.characterDataModified',
+      params: {
+        nodeId: nodeId,
+        value: value
+      }
     });
     return {};
   }
@@ -7082,7 +7094,7 @@
 
 
     inspectedNodes.forEach(function (elem, i) {
-      return window["$" + i] = elem;
+      return window['$' + i] = elem;
     }); // eslint-disable-line quotes
 
     return {};
@@ -7144,9 +7156,12 @@
     var objectId = _ref11.objectId;
     var node = ObjectStore$1.getByObjectId(objectId);
     var root = new Node(node);
-    this.execute('DOM.setChildNodes', {
-      parentId: root.nodeId,
-      nodes: root.children
+    this.send({
+      method: 'DOM.setChildNodes',
+      params: {
+        parentId: root.nodeId,
+        nodes: root.children
+      }
     });
     return {
       nodeId: root.nodeId
@@ -7211,7 +7226,10 @@
    */
 
   function documentUpdated() {
-    this.execute('DOM.documentUpdated', {});
+    this.send({
+      method: 'DOM.documentUpdated',
+      params: {}
+    });
   }
 
   var DOM = /*#__PURE__*/Object.freeze({
@@ -7527,7 +7545,7 @@
     }
 
     var computedStyle = [];
-    var computedStyleOrig = window.getComputedStyle(root.node);
+    var computedStyleOrig = window.setComputedStyle(root.node);
 
     for (var i = 0; i < computedStyleOrig.length; ++i) {
       computedStyle.push({
@@ -7683,8 +7701,11 @@
     var registeredStyleSheet = this.cssStore.getByUrl(url);
 
     if (registeredStyleSheet) {
-      return this.execute('CSS.styleSheetAdded', {
-        header: registeredStyleSheet.header
+      return this.send({
+        method: 'CSS.styleSheetAdded',
+        params: {
+          header: registeredStyleSheet.header
+        }
       });
     }
 
@@ -7694,7 +7715,7 @@
     });
 
     if (!styleSheetElement) {
-      return this.emit('debug', "Couldn't register stylesheet, url not found ".concat(url));
+      return this.socket.emit('debug', "Couldn't register stylesheet, url not found ".concat(url));
     }
 
     var styleSheet = this.cssStore.add({
@@ -7703,8 +7724,11 @@
       ownerNode: styleSheetElement.ownerNode,
       cssText: cssText
     });
-    this.execute('CSS.styleSheetAdded', {
-      header: styleSheet.header
+    this.send({
+      method: 'CSS.styleSheetAdded',
+      params: {
+        header: styleSheet.header
+      }
     });
   }
 
@@ -7815,19 +7839,22 @@
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var _script = _step.value;
           var hasSourceURL = Boolean(_script.attributes && _script.attributes.src && _script.attributes.src.nodeValue);
-          this.execute('Debugger.scriptParsed', {
-            startColumn: 0,
-            startLine: 0,
-            executionContextId: this.executionContextId,
-            executionContextAuxData: {
-              frameId: this.frameId,
-              isDefault: true
-            },
-            hasSourceURL: hasSourceURL,
-            isLiveEdit: false,
-            scriptId: _script._nodeId ? _script._nodeId.toString() : null,
-            sourceMapURL: '',
-            url: hasSourceURL ? _script.attributes.src.nodeValue : ''
+          this.send({
+            method: 'Debugger.scriptParsed',
+            params: {
+              startColumn: 0,
+              startLine: 0,
+              executionContextId: this.executionContextId,
+              executionContextAuxData: {
+                frameId: this.frameId,
+                isDefault: true
+              },
+              hasSourceURL: hasSourceURL,
+              isLiveEdit: false,
+              scriptId: _script._nodeId ? _script._nodeId.toString() : null,
+              sourceMapURL: '',
+              url: hasSourceURL ? _script.attributes.src.nodeValue : ''
+            }
           });
         }
       } catch (err) {
@@ -7839,21 +7866,24 @@
       return;
     }
 
-    this.execute('Debugger.scriptParsed', {
-      startColumn: 0,
-      endColumn: 0,
-      startLine: 0,
-      endLine: 0,
-      executionContextId: this.executionContextId,
-      executionContextAuxData: {
-        frameId: this.frameId,
-        isDefault: true
-      },
-      scriptId: script.scriptId.toString(),
-      hasSourceURL: false,
-      isLiveEdit: false,
-      sourceMapURL: '',
-      url: ''
+    this.send({
+      method: 'Debugger.scriptParsed',
+      params: {
+        startColumn: 0,
+        endColumn: 0,
+        startLine: 0,
+        endLine: 0,
+        executionContextId: this.executionContextId,
+        executionContextAuxData: {
+          frameId: this.frameId,
+          isDefault: true
+        },
+        scriptId: script.scriptId.toString(),
+        hasSourceURL: false,
+        isLiveEdit: false,
+        sourceMapURL: '',
+        url: ''
+      }
     });
   }
   /**
@@ -7863,21 +7893,24 @@
   function scriptFailedToParse(_ref2) {
     var scriptId = _ref2.scriptId,
         expression = _ref2.expression;
-    this.execute('Debugger.scriptParsed', {
-      startColumn: 0,
-      endColumn: expression.length,
-      startLine: 0,
-      endLine: 0,
-      executionContextId: this.executionContextId,
-      executionContextAuxData: {
-        frameId: this.frameId,
-        isDefault: true
-      },
-      scriptId: scriptId.toString(),
-      hasSourceURL: false,
-      isLiveEdit: false,
-      sourceMapURL: '',
-      url: ''
+    this.send({
+      method: 'Debugger.scriptParsed',
+      params: {
+        startColumn: 0,
+        endColumn: expression.length,
+        startLine: 0,
+        endLine: 0,
+        executionContextId: this.executionContextId,
+        executionContextAuxData: {
+          frameId: this.frameId,
+          isDefault: true
+        },
+        scriptId: scriptId.toString(),
+        hasSourceURL: false,
+        isLiveEdit: false,
+        sourceMapURL: '',
+        url: ''
+      }
     });
   }
 
@@ -8109,72 +8142,76 @@
   });
 
   /**
+   * ---- Page Domain ----
+   */
+
+  /**
    * Methods
    */
-  var addScriptToEvaluateOnNewDocument = function addScriptToEvaluateOnNewDocument() {
+  function addScriptToEvaluateOnNewDocument() {
     return {};
-  };
-  var bringToFront = function bringToFront() {
+  }
+  function bringToFront() {
     return {};
-  };
-  var captureScreenshot = function captureScreenshot() {
+  }
+  function captureScreenshot() {
     return {};
-  };
-  var createIsolatedWorld = function createIsolatedWorld() {
+  }
+  function createIsolatedWorld() {
     return {};
-  };
-  var disable = function disable() {
+  }
+  function disable() {
     return {};
-  };
-  var enable = function enable() {
+  }
+  function enable() {
     return {};
-  };
-  var getAppManifest = function getAppManifest() {
+  }
+  function getAppManifest() {
     return {};
-  };
-  var getFrameTree = function getFrameTree() {
+  }
+  function getFrameTree() {
     return {};
-  };
-  var getLayoutMetrics = function getLayoutMetrics() {
+  }
+  function getLayoutMetrics() {
     return {};
-  };
-  var getNavigationHistory = function getNavigationHistory() {
+  }
+  function getNavigationHistory() {
     return {};
-  };
-  var handleJavaScriptDialog = function handleJavaScriptDialog() {
+  }
+  function handleJavaScriptDialog() {
     return {};
-  };
-  var navigate = function navigate(_ref) {
+  }
+  function navigate(_ref) {
     var url = _ref.url;
     window.localtion.assign(url);
     return {};
-  };
-  var navigateToHistoryEntry = function navigateToHistoryEntry(_ref2) {
+  }
+  function navigateToHistoryEntry(_ref2) {
     var entryId = _ref2.entryId;
     window.history.go(entryId);
     return {};
-  };
-  var printToPDF = function printToPDF() {
+  }
+  function printToPDF() {
     return {};
-  };
-  var reload = function reload(_ref3) {
+  }
+  function reload(_ref3) {
     var ignoreCache = _ref3.ignoreCache;
     window.location.reload(Boolean(ignoreCache));
     return {};
-  };
-  var removeScriptToEvaluateOnNewDocument = function removeScriptToEvaluateOnNewDocument() {
+  }
+  function removeScriptToEvaluateOnNewDocument() {
     return {};
-  };
-  var resetNavigationHistory = function resetNavigationHistory() {
+  }
+  function resetNavigationHistory() {
     return {};
-  };
-  var setDocumentContent = function setDocumentContent() {
+  }
+  function setDocumentContent() {
     return {};
-  };
-  var stopLoading = function stopLoading() {
+  }
+  function stopLoading() {
     return {};
-  };
-  var getResourceTree = function getResourceTree() {
+  }
+  function getResourceTree() {
     return {
       frameTree: {
         childFrames: [],
@@ -8189,16 +8226,27 @@
         }
       }
     };
-  };
+  }
   /**
    * Events
    */
-  // export const frameStoppedLoading = () => {
-  //     this.execute('Page.frameStoppedLoading', { frameId: this.frameId })
-  // }
-  // export const loadEventFired = () => {
-  //     this.execute('Page.loadEventFired', { timestamp: 649314.52695 })
-  // }
+
+  function frameStoppedLoading() {
+    this.send({
+      method: 'Page.frameStoppedLoading',
+      params: {
+        frameId: this.frameId
+      }
+    });
+  }
+  function loadEventFired() {
+    this.send({
+      method: 'Page.loadEventFired',
+      params: {
+        timestamp: 649314.52695
+      }
+    });
+  }
 
   var Page = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -8221,7 +8269,9 @@
     resetNavigationHistory: resetNavigationHistory,
     setDocumentContent: setDocumentContent,
     stopLoading: stopLoading,
-    getResourceTree: getResourceTree
+    getResourceTree: getResourceTree,
+    frameStoppedLoading: frameStoppedLoading,
+    loadEventFired: loadEventFired
   });
 
   /**
@@ -8459,7 +8509,7 @@
           args[_key] = arguments[_key];
         }
 
-        self.execute('Runtime.consoleAPICalled', {
+        self.send('Runtime.consoleAPICalled', {
           args: args.map(getConsoleArg),
           executionContext: self.executionContextId,
           stackTrace: {
@@ -8795,15 +8845,18 @@
    */
 
   function executionContextCreated() {
-    this.execute('Runtime.executionContextCreated', {
-      context: {
-        auxData: {
-          frameId: this.frameId,
-          isDefault: true
-        },
-        id: this.executionContextId,
-        name: document.title,
-        origin: window.location.origin
+    this.send({
+      method: 'Runtime.executionContextCreated',
+      params: {
+        context: {
+          auxData: {
+            frameId: this.frameId,
+            isDefault: true
+          },
+          id: this.executionContextId,
+          name: document.title,
+          origin: window.location.origin
+        }
       }
     });
   }
@@ -9259,34 +9312,6 @@
     Webdriver: Webdriver
   };
 
-  function dispatch (domains) {
-    var _this = this;
-
-    return function (CDPObject) {
-      var id = CDPObject.id,
-          params = CDPObject.params,
-          method = CDPObject.method;
-      var domainArr = method.split('.');
-
-      var _domainArr = _slicedToArray(domainArr, 2),
-          domain = _domainArr[0],
-          subDomain = _domainArr[1];
-
-      var response = {};
-      if (id) response.id = id;
-
-      if (!domains[domain]) {
-        response.result = "Not support domain [".concat(domain, "]");
-      } else {
-        var execResult = domains[domain][subDomain];
-        response.method = method;
-        response.result = execResult ? execResult(params || {}) : {};
-      }
-
-      _this.emit('cdp', response);
-    };
-  }
-
   function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
   function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -9297,6 +9322,7 @@
 
       _classCallCheck(this, RemoteDebugger);
 
+      this.socket = null;
       this.domains = {};
       this.initDomains();
       options = this.mergeOptions(options);
@@ -9362,6 +9388,36 @@
         return inspectorPage;
       }()
     }, {
+      key: "dispatch",
+      value: function dispatch(CDP) {
+        var id = CDP.id,
+            params = CDP.params,
+            method = CDP.method;
+        var domainArr = method.split('.');
+
+        var _domainArr = _slicedToArray(domainArr, 2),
+            domain = _domainArr[0],
+            subDomain = _domainArr[1];
+
+        var response = {};
+        if (id) response.id = id;
+
+        if (!this.domains[domain]) {
+          response.result = "Not support domain [".concat(domain, "]");
+        } else {
+          var execResult = this.domains[domain][subDomain];
+          response.method = method;
+          response.result = execResult ? execResult.call(this, params || {}) : {};
+        }
+
+        this.send(response);
+      }
+    }, {
+      key: "send",
+      value: function send(CDP) {
+        this.socket.emit('cdp', CDP);
+      }
+    }, {
       key: "initDomains",
       value: function initDomains() {
         for (var _i = 0, _Object$entries = Object.entries(domains); _i < _Object$entries.length; _i++) {
@@ -9374,16 +9430,17 @@
       }
     }, {
       key: "initSocketEvent",
-      value: function initSocketEvent(socket) {
-        socket.emit('connected');
-        socket.on('cdp', dispatch.call(socket, this.domains));
+      value: function initSocketEvent() {
+        this.socket.emit('connected');
+        this.socket.on('cdp', this.dispatch.bind(this));
       }
     }, {
       key: "connectSocket",
       value: function connectSocket() {
         var wsUrlOrigin = getWsUrlOrigin(this.wsHost);
         var socket = io("ws://".concat(wsUrlOrigin, "/devtools/page/").concat(this.pid));
-        this.initSocketEvent(socket);
+        this.socket = socket;
+        this.initSocketEvent();
       }
     }, {
       key: "mergeOptions",

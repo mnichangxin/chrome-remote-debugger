@@ -15,7 +15,7 @@ export function getComputedStyleForNode({ nodeId }) {
     }
 
     const computedStyle = []
-    const computedStyleOrig = window.getComputedStyle(root.node)
+    const computedStyleOrig = window.setComputedStyle(root.node)
     for (let i = 0; i < computedStyleOrig.length; ++i) {
         computedStyle.push({
             name: computedStyleOrig[i],
@@ -132,8 +132,11 @@ export function styleSheetRegistered({ cssText, url, ownerNode }) {
      */
     const registeredStyleSheet = this.cssStore.getByUrl(url)
     if (registeredStyleSheet) {
-        return this.execute('CSS.styleSheetAdded', {
-            header: registeredStyleSheet.header
+        return this.send({
+            method: 'CSS.styleSheetAdded',
+            params: {
+                header: registeredStyleSheet.header
+            }
         })
     }
 
@@ -145,7 +148,7 @@ export function styleSheetRegistered({ cssText, url, ownerNode }) {
     )
 
     if (!styleSheetElement) {
-        return this.emit(
+        return this.socket.emit(
             'debug',
             `Couldn't register stylesheet, url not found ${url}`
         )
@@ -157,5 +160,8 @@ export function styleSheetRegistered({ cssText, url, ownerNode }) {
         ownerNode: styleSheetElement.ownerNode,
         cssText
     })
-    this.execute('CSS.styleSheetAdded', { header: styleSheet.header })
+    this.send({
+        method: 'CSS.styleSheetAdded',
+        params: { header: styleSheet.header }
+    })
 }

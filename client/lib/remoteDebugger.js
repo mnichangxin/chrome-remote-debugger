@@ -1,12 +1,12 @@
 import io from 'socket.io-client'
 import domains from './domains'
-import dispatch from './dispatch'
 import { request, to, generatePid } from './utils/common'
 import { setNodeIds } from './utils/dom'
 import { getWsUrlOrigin } from './utils/helper'
 
 export default class RemoteDebugger {
     constructor(options) {
+        this.socket = null
         this.domains = {}
         this.initDomains()
         options = this.mergeOptions(options)
@@ -15,7 +15,6 @@ export default class RemoteDebugger {
         })
         this.loadHandler()
     }
-
     async inspectorPage() {
         const url = `//${getWsUrlOrigin(this.wsHost)}/register`
         const requestData = {
@@ -35,23 +34,44 @@ export default class RemoteDebugger {
         if (err) throw err
         if (res.errNo === 0) this.connectSocket()
     }
+    dispatch(CDP) {
+        const { id, params, method } = CDP
+        const domainArr = method.split('.')
+        const [domain, subDomain] = domainArr
 
+        let response = {}
+
+        if (id) response.id = id
+        if (!this.domains[domain]) {
+            response.result = `Not support domain [${domain}]`
+        } else {
+            const execResult = this.domains[domain][subDomain]
+            response.method = method
+            response.result = execResult
+                ? execResult.call(this, params || {})
+                : {}
+        }
+
+        this.send(response)
+    }
+    send(CDP) {
+        this.socket.emit('cdp', CDP)
+    }
     initDomains() {
         for (let [name, domain] of Object.entries(domains)) {
             this.domains[name] = domain
         }
     }
-    initSocketEvent(socket) {
-        socket.emit('connected')
-        socket.on('cdp', dispatch.call(socket, this.domains))
+    initSocketEvent() {
+        this.socket.emit('connected')
+        this.socket.on('cdp', this.dispatch.bind(this))
     }
-
     connectSocket() {
         const wsUrlOrigin = getWsUrlOrigin(this.wsHost)
         const socket = io(`ws://${wsUrlOrigin}/devtools/page/${this.pid}`)
-        this.initSocketEvent(socket)
+        this.socket = socket
+        this.initSocketEvent()
     }
-
     mergeOptions(options) {
         return {
             pid: generatePid(),
@@ -61,7 +81,6 @@ export default class RemoteDebugger {
             ...options
         }
     }
-
     loadHandler() {
         document.onreadystatechange = () => {
             if (document.readyState === 'complete') {
@@ -74,7 +93,6 @@ export default class RemoteDebugger {
             }
         }
     }
-
     init() {
         try {
             this.inspectorPage()
