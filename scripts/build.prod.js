@@ -1,5 +1,5 @@
 import { terser } from 'rollup-plugin-terser'
-import rollupConfig from './rollup.config'
+import rollupConfig from './build.config'
 
 const getDevOutput = baseOutput => ({
     ...baseOutput,

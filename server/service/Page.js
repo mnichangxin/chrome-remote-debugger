@@ -54,7 +54,7 @@ export default class Page {
     }
     flushBuffer() {
         this.buffer.forEach(message => {
-            this.ws.send(JSON.stringify(message))
+            this.ws.send(message)
         })
     }
     forwardToDevTools(message) {
@@ -62,9 +62,9 @@ export default class Page {
             this.buffer.push(message)
             return
         }
-        this.ws.send(JSON.stringify(message))
+        this.ws.send(message)
     }
     forwardToClient(message) {
-        this.socket.emit('cdp', JSON.parse(message))
+        this.socket.emit('cdp', message)
     }
 }

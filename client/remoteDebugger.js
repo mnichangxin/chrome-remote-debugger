@@ -1,19 +1,14 @@
 import io from 'socket.io-client'
-import domains from './domains'
-import { request, to, generatePid } from './utils/common'
-import { setNodeIds } from './utils/dom'
-import { getWsUrlOrigin } from './utils/helper'
+import chobitsu from '@ksky521/chobitsu'
+import { request, to, generatePid, getWsUrlOrigin } from './utils'
 
 export default class RemoteDebugger {
     constructor(options) {
         this.socket = null
-        this.domains = {}
-        this.initDomains()
         options = this.mergeOptions(options)
         Object.keys(options).forEach(key => {
             this[key] = options[key]
         })
-        this.loadHandler()
     }
     async inspectorPage() {
         const url = `//${getWsUrlOrigin(this.wsHost)}/register`
@@ -34,26 +29,6 @@ export default class RemoteDebugger {
         if (err) throw err
         if (res.errNo === 0) this.connectSocket()
     }
-    dispatch(CDP) {
-        const { id, params, method } = CDP
-        const domainArr = method.split('.')
-        const [domain, subDomain] = domainArr
-
-        let response = {}
-
-        if (id) response.id = id
-        if (!this.domains[domain]) {
-            response.result = `Not support domain [${domain}]`
-        } else {
-            const execResult = this.domains[domain][subDomain]
-            response.method = method
-            response.result = execResult
-                ? execResult.call(this, params || {})
-                : {}
-        }
-
-        this.send(response)
-    }
     send(CDP) {
         this.socket.emit('cdp', CDP)
     }
@@ -64,7 +39,8 @@ export default class RemoteDebugger {
     }
     initSocketEvent() {
         this.socket.emit('connected')
-        this.socket.on('cdp', this.dispatch.bind(this))
+        this.socket.on('cdp', chobitsu.sendRawMessage.bind(chobitsu))
+        chobitsu.setOnMessage(this.send.bind(this))
     }
     connectSocket() {
         const wsUrlOrigin = getWsUrlOrigin(this.wsHost)
@@ -79,18 +55,6 @@ export default class RemoteDebugger {
             url: location.href,
             wsHost: '//localhost:9222',
             ...options
-        }
-    }
-    loadHandler() {
-        document.onreadystatechange = () => {
-            if (document.readyState === 'complete') {
-                this.domains.Runtime.executionContextCreated.call(this)
-                this.domains.Debugger.scriptParsed.call(this)
-                this.domains.Page.frameStoppedLoading.call(this)
-                this.domains.Page.loadEventFired.call(this)
-                this.domains.DOM.documentUpdated.call(this)
-                setNodeIds()
-            }
         }
     }
     init() {

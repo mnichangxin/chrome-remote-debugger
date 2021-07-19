@@ -4,6 +4,7 @@ import Koa from 'koa'
 import KoaBodyParser from 'koa-bodyparser'
 import Logger from 'koa-logger'
 import IO from 'socket.io'
+// import opener from 'opener'
 import StaticFile from './middlewares/staticFile'
 import Controller from './middlewares/controller'
 import SocketManage from './service/SocketManage'
@@ -26,9 +27,9 @@ const createApp = (port = 9222) => {
             '/devtools'
         )
     )
-    app.use(StaticFile(path.resolve(__dirname, '../client'), '/client'))
-    app.use(StaticFile(path.resolve(__dirname, '../views'), '/view'))
+    app.use(StaticFile(path.resolve(__dirname, '../view'), '/view'))
     app.use(StaticFile(path.resolve(__dirname, '../test'), '/test'))
+    app.use(StaticFile(path.resolve(__dirname, '../dist'), '/dist'))
 
     const server = http.createServer(app.callback())
     const ioServer = IO(server, {
@@ -41,6 +42,8 @@ const createApp = (port = 9222) => {
     server.on('upgrade', cdp.upgradeWssSocket.bind(cdp))
 
     server.listen(port)
+
+    // opener(`http://localhost:${port}/view/home.html`)
 
     console.log(`server start at port: ${port}...`)
 }
