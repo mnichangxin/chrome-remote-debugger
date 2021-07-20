@@ -53,7 +53,7 @@ export default class RemoteDebugger {
             pid: generatePid(),
             title: document.title,
             url: location.href,
-            wsHost: '//localhost:9222',
+            wsHost: `//${location.host}`,
             ...options
         }
     }
