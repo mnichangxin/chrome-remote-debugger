@@ -1,4 +1,5 @@
 import xhr from 'xhr'
+import { nanoid } from 'nanoid'
 
 export const json2FormUrl = jsonData => {
     let formUrl = ''
@@ -13,17 +14,6 @@ export const json2FormUrl = jsonData => {
 
 export const getWsUrlOrigin = wsHost =>
     wsHost.replace(/^((https?|ws):\/\/|\/\/)/, '')
-
-export const randomString = e => {
-    e = e || 32
-    const t = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
-    const a = t.length
-    let n = ''
-
-    for (let i = 0; i < e; i++) n += t.charAt(Math.floor(Math.random() * a))
-
-    return n
-}
 
 export const request = ({ url, method, formType, ...options }) =>
     new Promise((resolve, reject) => {
@@ -50,9 +40,42 @@ export const to = (promise, errExt) =>
             return [err, undefined]
         })
 
+export const getRandomString = e => {
+    e = e || 32
+    const t = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
+    const a = t.length
+    let n = ''
+
+    for (let i = 0; i < e; i++) n += t.charAt(Math.floor(Math.random() * a))
+
+    return n
+}
+
+export const getCurrentScript = () => {
+    if (document.currentScript) return document.currentScript
+    const scriptElements = document.scripts || []
+    const currentScript = scriptElements[scriptElements.length - 1]
+    if (currentScript) return currentScript
+    return null
+}
+
+export const getQuery = () => {
+    const query = {}
+    const search = location.search.replace('?', '')
+    if (search) {
+        const searchStrArr = search.split('&')
+        searchStrArr.forEach(searchStrItem => {
+            const queryStrArr = searchStrItem.split('=')
+            const [key, value] = queryStrArr
+            query[key] = value
+        })
+    }
+    return query
+}
+
 export const generatePid = (cache = true) => {
-    const currentScript = document.currentScript
-    let pid = randomString()
+    const currentScript = getCurrentScript()
+    let pid = getRandomString()
 
     if (cache) {
         const storageKey = `__crd_${location.origin}${location.pathname}`
@@ -70,3 +93,5 @@ export const generatePid = (cache = true) => {
 
     return pid
 }
+
+export const generateUuid = () => nanoid()

@@ -1,3 +1,3 @@
-import RemoteDebugger from './remoteDebugger'
+import DebuggerClient from './debuggerClient'
 
-export default RemoteDebugger
+export default DebuggerClient

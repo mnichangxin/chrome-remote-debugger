@@ -41,7 +41,9 @@ const outputList = [
 
 export default outputList.map(output => {
     const isUMDMode = output.format === 'umd'
-    const external = isUMDMode ? [] : ['socket.io-client', 'xhr', 'chobitsu']
+    const external = isUMDMode
+        ? []
+        : ['socket.io-client', 'xhr', 'nanoid', 'chobitsu']
     let globals = {}
     if (!isUMDMode) {
         external.forEach(key => (globals[key] = key))
