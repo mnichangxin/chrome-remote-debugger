@@ -1,24 +1,23 @@
 import chobitsu from '@ksky521/chobitsu'
 import Socket from './socket'
 import { mergeOptions } from './options'
+import { getMetaData } from './metaData'
 import { request, to, getWsUrlOrigin } from './utils'
 
 export default class DebuggerClient {
     constructor(options) {
         options = mergeOptions(options)
         this.pid = options.pid
-        this.title = options.title
-        this.url = options.url
         this.wsHost = options.wsHost
+        this.metaData = getMetaData()
         this.socket = null
     }
     async register() {
         const url = `//${getWsUrlOrigin(this.wsHost)}/register`
         const requestData = {
             pid: this.pid,
-            title: this.title,
-            url: this.url,
-            wsHost: this.wsHost
+            wsHost: this.wsHost,
+            metaData: this.metaData
         }
         const [err, res] = await to(
             request({

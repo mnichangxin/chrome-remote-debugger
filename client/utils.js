@@ -73,6 +73,33 @@ export const getQuery = () => {
     return query
 }
 
+export const getPlatform = userAgent => {
+    const ua = userAgent.toLowerCase()
+    const testUa = regexp => regexp.test(ua)
+
+    let system = 'unknow'
+    let platform = 'unknow'
+
+    if (testUa(/windows|win32|win64|wow32|wow64/g)) {
+        system = 'windows'
+    } else if (testUa(/macintosh|macintel/g)) {
+        system = 'macos'
+    } else if (testUa(/x11/g)) {
+        system = 'linux'
+    } else if (testUa(/android|adr/g)) {
+        system = 'android'
+    } else if (testUa(/ios|iphone|ipad|ipod|iwatch/g)) {
+        system = 'ios'
+    }
+    if (system === 'windows' || system === 'macos' || system === 'linux') {
+        platform = 'desktop'
+    } else if (system === 'android' || system === 'ios' || testUa(/mobile/g)) {
+        platform = 'mobile'
+    }
+
+    return { platform, system }
+}
+
 export const generatePid = (cache = true) => {
     const currentScript = getCurrentScript()
     let pid = getRandomString()
