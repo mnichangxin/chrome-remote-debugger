@@ -5,8 +5,11 @@ export const json2FormUrl = jsonData => {
     let formUrl = ''
 
     Object.keys(jsonData).forEach((key, i) => {
+        let value = jsonData[key]
+        if (Object.prototype.toString.call(value) === '[object Object]')
+            value = encodeURIComponent(JSON.stringify(value))
         if (i > 0) formUrl += '&'
-        formUrl += `${key}=${jsonData[key]}`
+        formUrl += `${key}=${value}`
     })
 
     return formUrl

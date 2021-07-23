@@ -1,7 +1,7 @@
 import SocketManage from '../service/SocketManage'
 
 export const index = ctx => {
-    ctx.redirect('/view/index.html')
+    ctx.redirect('/view/home.html')
 }
 
 export const register = ctx => {

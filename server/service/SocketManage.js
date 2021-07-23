@@ -38,12 +38,9 @@ export default class SocketManage {
     jsonForPages() {
         return this.pages.map(page => {
             const { pid, wsHost, metaData } = page
-            const { title, url } = metaData
             const devtoolsPath = `${wsHost}/devtools/page/${pid}`
             return {
                 pid,
-                title,
-                url,
                 metaData,
                 devtoolsFrontendUrl: `/devtools/inspector.html?ws=${devtoolsPath}`,
                 webSocketDebuggerUrl: `ws://${devtoolsPath}`

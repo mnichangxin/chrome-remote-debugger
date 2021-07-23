@@ -41,7 +41,7 @@ export default class DebuggerClient {
         chobitsu.setOnMessage(message => this.socket.io.emit('cdp', message))
     }
     async init() {
-        const [err, res] = await register()
+        const [err, res] = await this.register()
         if (err) return console.log(err)
         if (res) this.initSocket()
         else console.log('Please refresh page to retry...')

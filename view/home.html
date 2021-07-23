@@ -49,12 +49,12 @@
     </head>
     <body>
         <div class="container">
-            <p class="title">Chrome Remote Debugger</p>
+            <!-- <p class="title">Chrome Remote Debugger</p> -->
             <section class="tip"></section>
             <section class="page-list-container">
-                <!-- <h3>可调试页面列表：</h3> -->
+                <h3>可调试页面列表：</h3>
                 <ul class="page-list"></ul>
-                <div class="page-list-empty">暂无可调试的页面</div>
+                <!-- <div class="page-list-empty">暂无可调试的页面</div> -->
             </section>
         </div>
         <script>
@@ -63,8 +63,8 @@
                 pageList.forEach(function(page) {
                     renderStr += '<li class="page-item">\
                         <a href="' + page.devtoolsFrontendUrl + '" target="_blank">\
-                            <p class="page-title">' + page.title +'</p>\
-                            <p class="page-url">' + page.url + '</p>\
+                            <p class="page-title">' + page.metaData.title +'</p>\
+                            <p class="page-url">' + page.metaData.url + '</p>\
                         </a>\
                     </li>'
                 })

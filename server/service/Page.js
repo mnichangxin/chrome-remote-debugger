@@ -14,7 +14,9 @@ export default class Page {
         this.wsServer = new WebSocket.Server({ noServer: true })
 
         Object.keys(params).forEach(key => {
-            this[key] = params[key] || ''
+            if (key === 'metaData')
+                this.metaData = JSON.parse(decodeURIComponent(params[key]))
+            else this[key] = params[key] || ''
         })
 
         this.ioServer.on('connection', socket => {

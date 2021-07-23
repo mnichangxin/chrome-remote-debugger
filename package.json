@@ -6,11 +6,12 @@
     "author": "mnichangxin@163.com",
     "license": "MIT",
     "bin": {
-        "crd": "bin/crd.js"
+        "crd": "bin/crd.sh"
     },
     "scripts": {
         "clean": "rimraf -rf dist",
-        "serve": "nodemon bin/crd.js --exec babel-node --ignore client",
+        "dev": "npm run build:dev && npm run server:dev",
+        "server:dev": "nodemon bin/crd.js --exec babel-node --ignore client",
         "build:dev": "npm run clean && rollup --config scripts/build.dev.js",
         "build:prod": "npm run clean && rollup --config scripts/build.prod.js",
         "build": "npm run clean && rollup --config scripts/build.dev.js && rollup --config scripts/build.prod.js"

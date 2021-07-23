@@ -3,7 +3,7 @@ import { getPlatform } from './utils'
 export const getMetaData = () => {
     const { appName, appCodeName, appVersion, language, userAgent } = navigator
     const { title } = document
-    const { url } = location
+    const { href: url } = location
 
     return {
         title: title || 'unknow',
@@ -12,6 +12,6 @@ export const getMetaData = () => {
         appCodeName: appCodeName || '',
         appVersion: appVersion || '',
         language: language || '',
-        platform: getPlatform(userAgent)
+        platInfo: getPlatform(userAgent)
     }
 }

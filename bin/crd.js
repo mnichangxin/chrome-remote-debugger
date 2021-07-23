@@ -1,9 +1,7 @@
-#!/usr/bin/env node
-
-const { program } = require('commander')
-const opener = require('opener')
-const { version } = require('../package.json')
-const Server = require('../server/app')
+import { program } from 'commander'
+import opener from 'opener'
+import { version } from '../package.json'
+import Server from '../server/app'
 
 program.version(version)
 
@@ -17,7 +15,7 @@ program
     )
     .action(({ port = 9222 }) => {
         new Server({ port }).start()
-        opener(`localhost:${port}`)
+        opener(`http://localhost:${port}`)
     })
 
 program

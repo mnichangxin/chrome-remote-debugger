@@ -42,7 +42,7 @@ export default class ServerApp {
         this.server.listen(this.port)
     }
     createSocketServer() {
-        this.socketServer = IO(this.server, { cor: { origin: '*' } })
+        this.socketServer = IO(this.server, { cors: { origin: '*' } })
     }
     createServer() {
         this.app = new Koa()
