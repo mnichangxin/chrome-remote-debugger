@@ -92,11 +92,11 @@ export const getPlatform = userAgent => {
     } else if (testUa(/android|adr/g)) {
         system = 'android'
     } else if (testUa(/ios|iphone|ipad|ipod|iwatch/g)) {
-        system = 'ios'
+        system = 'iOS'
     }
     if (system === 'windows' || system === 'macos' || system === 'linux') {
-        platform = 'desktop'
-    } else if (system === 'android' || system === 'ios' || testUa(/mobile/g)) {
+        platform = 'pc'
+    } else if (system === 'android' || system === 'iOS' || testUa(/mobile/g)) {
         platform = 'mobile'
     }
 

@@ -1,6 +1,0 @@
-module.exports = {
-    slintIntegration: true,
-    singleQuote: true,
-    semi: false,
-    tabWidth: 4
-}

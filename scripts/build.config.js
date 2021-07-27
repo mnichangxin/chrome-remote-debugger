@@ -5,7 +5,7 @@ import babel from '@rollup/plugin-babel'
 import { version } from '../package.json'
 
 const defaultOption = {
-    input: 'client/debuggerClient',
+    input: 'client/index',
     output: {
         banner: `/* chrome-remote-debugger version ${version} */`
     },

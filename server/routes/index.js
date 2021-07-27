@@ -1,7 +1,8 @@
-import { index, register, json } from '../controllers'
+import { index, register, json, serverInfo } from '../controllers'
 
 export default {
     'GET /': index,
     'ALL /register': register,
-    'ALL /json': json
+    'ALL /json': json,
+    'ALL /serverInfo': serverInfo
 }

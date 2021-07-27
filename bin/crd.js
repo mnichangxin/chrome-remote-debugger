@@ -1,5 +1,4 @@
 import { program } from 'commander'
-import opener from 'opener'
 import { version } from '../package.json'
 import Server from '../server/app'
 
@@ -14,8 +13,7 @@ program
         parseInt
     )
     .action(({ port = 9222 }) => {
-        new Server({ port }).start()
-        opener(`http://localhost:${port}`)
+        new Server({ port }).start().openBoard()
     })
 
 program
@@ -28,7 +26,7 @@ program
 
 const args = process.argv
 
-if (args.length === 2) args.push('start')
 if (args[2] === '--help' || args[2] === '-h') args[2] = 'help'
+if (args.length === 2) args.push('start')
 
 program.parse(args)

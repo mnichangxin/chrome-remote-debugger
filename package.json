@@ -1,7 +1,7 @@
 {
     "name": "chrome-remote-debugger",
     "version": "0.0.1",
-    "description": "Debugger any website by CDP",
+    "description": "Use Chrome DevTools debugging web page",
     "main": "server/app.js",
     "author": "mnichangxin@163.com",
     "license": "MIT",
@@ -11,7 +11,7 @@
     "scripts": {
         "clean": "rimraf -rf dist",
         "dev": "npm run build:dev && npm run server:dev",
-        "server:dev": "nodemon bin/crd.js --exec babel-node --ignore client",
+        "server:dev": "nodemon server/app.js --mode=dev --exec babel-node",
         "build:dev": "npm run clean && rollup --config scripts/build.dev.js",
         "build:prod": "npm run clean && rollup --config scripts/build.prod.js",
         "build": "npm run clean && rollup --config scripts/build.dev.js && rollup --config scripts/build.prod.js"

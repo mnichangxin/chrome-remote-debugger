@@ -1,0 +1,129 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+html, body {
+    height: 100%;
+    font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
+body {
+    background-color: #f2f6ff;
+}
+.container {
+    margin: 0 auto;
+    min-width: 600px;
+    max-width: 1000px;
+}
+.header {
+    padding: 50px 0;
+    color: rgba(0, 0, 0, .75);
+    box-sizing: border-box;
+}
+.header h1 {
+    text-align: center;
+}
+.header-info {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+.header-info-port {
+    margin-left: 10px;
+}
+.wrap {
+    padding: 0 50px;
+}
+.tips {
+    font-size: 14px;
+    color: rgba(0, 0, 0, .65);
+    list-style: none;
+}
+.tip-item {
+    padding-bottom: 10px;
+}
+.tip-num {
+    margin-right: 5px;
+    display: inline-block;
+    min-width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    color: #ffffff;
+    background-color: rgba(25, 104, 250, 0.6);
+}
+.tip-item a {
+    color: rgba(25, 104, 250, 0.8);
+    text-decoration: none;
+}
+.tip-item a:hover {
+    color: rgba(25, 104, 250, 1);
+}
+.list-container {
+    padding: 30px 0;
+}
+.page-list {
+    list-style: none;
+}
+.page-item {
+    padding: 16px 0;
+    border-radius: 5px;
+    background: #ffffff;
+}
+.page-item + .page-item {
+    margin-top: 20px;
+}
+.page-list-empty {
+    display: none;
+    font-weight: 700;
+    color: #cccccc;
+    text-align: center;
+}
+.page-content {
+    padding: 0 20px;
+}
+.page-title {
+    color: none;
+    text-decoration: none;
+    cursor: pointer;
+}
+.page-title-text {
+    font-weight: 700;
+    color: rgba(0, 0, 0, .85);
+}
+.page-title-id {
+    font-size: 10px;
+    color: #afafaf;
+}
+.page-url {
+    margin-top: 8px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, .6);
+}
+.page-url .icon-fuzhi {
+    position: relative;
+    top: 1px;
+    cursor: pointer;
+}
+.page-url-text {
+    margin-left: 3px;
+}
+.page-plat-info {
+    margin-top: 15px;
+    padding: 0 20px;
+    overflow: hidden;
+    list-style: none;;
+}
+.page-plat-item {
+    float: left;
+}
+.page-plat-item + .page-plat-item {
+    margin-left: 10px;
+}
+.page-plat-item .iconfont {
+    color: #aeacac;
+}
+.page-plat-item .iconfont.active {
+    color: rgba(25, 104, 250, .85);
+    cursor: pointer;
+}
