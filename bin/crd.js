@@ -17,6 +17,13 @@ program
     })
 
 program
+    .command('version')
+    .description('crd version')
+    .action(() => {
+        console.log(`v${version}`)
+    })
+
+program
     .command('help [command]')
     .description('display help information for a command')
     .action(command => {
@@ -27,6 +34,7 @@ program
 const args = process.argv
 
 if (args[2] === '--help' || args[2] === '-h') args[2] = 'help'
-if (args.length === 2) args.push('start')
+if (args[2] === '--version' || args[2] === '-v') args[2] = 'version'
+if (args.length === 2) args.push('version')
 
 program.parse(args)

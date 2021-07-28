@@ -1,4 +1,4 @@
-import chobitsu from '@ksky521/chobitsu'
+import chobitsu from '@mnichangxin/chobitsu'
 import Socket from './socket'
 import { mergeOptions } from './options'
 import { getMetaData } from './metaData'

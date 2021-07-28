@@ -1,0 +1,5 @@
+client
+scripts
+.gitignore
+.npmignore
+prettier.config.json

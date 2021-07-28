@@ -52,8 +52,6 @@ export default class SocketManage {
             this.pages.forEach(page => {
                 if (req.url === `/devtools/page/${page.pid}`) {
                     return page.handleUpgrade(req, socket, head)
-                } else {
-                    socket.destroy()
                 }
             })
         } catch (e) {

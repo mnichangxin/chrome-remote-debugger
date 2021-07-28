@@ -1,31 +1,120 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Inspector Demo</title>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Debugger Demo</title>
+        <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.4.4/weui.min.css" />
+        <style>
+            body {
+                background-color: var(--weui-BG-0);
+            }
+            .box {
+                padding: 15px;
+                text-align: center;
+            }
+            .weui-btn {
+                width: auto;
+            }
+        </style>
+        <script
+            type="text/javascript"
+            src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"
+        ></script>
+        <script type="text/javascript" src="/dist/crd.umd.js"></script>
+        <script>
+            function errorFn() {
+                var runtimeFun = function() {
+                    throw new Error('[crd]: test runtime error...')
+                }
+                runtimeFun()
+            }
+            var config = {
+                Console: {
+                    'console.log': function() {
+                        console.log('[crd]: test log...')
+                    },
+                    'console.error': function() {
+                        console.error({ type: '[crd]: test log error...' })
+                    },
+                    'runtime error': function() {
+                        errorFn()
+                    }
+                },
+                Network: {
+                    'new Image': function() {
+                        var i = new Image();
+                        i.src = 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png';
+                    },
+                    script: function() {
+                        $.ajax({
+                            url: 'https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js',
+                            dataType: 'jsonp'
+                        })
+                    },
+                    xhr: function() {
+                        $.get('/serverInfo')
+                    },
+                    fetch: function() {
+                        fetch('/serverInfo')
+                    }
+                },
+                Application: {
+                    'set localStorage': function() {
+                        localStorage.setItem('crd_localStorage', 'hello world');
+                    },
+                    'delete localStorage': function() {
+                        localStorage.removeItem('crd_localStorage');
+                    },
+                    'set cookies': function() {
+                        document.cookie = 'crd_cookie=hello_world';
+                    },
+                    'delete cookies': function() {
+                        document.cookie = 'crd_cookie=;expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+                    }
+                }
+            }
+        </script>
     </head>
     <body>
-        <div class="container">
-            <h3 class="test-box">测试页面</h3>
-            <section>
-                <p>内容内容内容内容内容内容</p>
-                <p>内容内容内容内容内容内容</p>
-                <p>内容内容内容内容内容内容</p>
-                <p>内容内容内容内容内容内容</p>
-            </section>
-            <section>
-                <ul>
-                    <li>第一条</li>
-                    <li>第二条</li>
-                    <li>第三条</li>
-                    <li>第四条</li>
-                </ul>
-            </section>
-        </div>
-        <script src="/dist/crd.umd.js"></script>
+        <div class="weui-panel weui-panel_access container"></div>
         <script>
-            new CRD({
-                wsHost: location.host
-            }).init()
+            (function() {
+                var $container = $('.container')
+                var handlers = {}
+                var html = ''
+
+                Object.keys(config).forEach(function(panelName) {
+                    html +=
+                        '<div class="weui-panel weui-panel_access">' +
+                        '<div class="weui-panel__hd">' +
+                        panelName +
+                        '</div>' +
+                        '<div class="weui-panel__bd"><div class="box">'
+
+                    var item = config[panelName]
+
+                    html += Object.keys(item).map(function(k) {
+                        var id = [panelName, k].join('-').replace(/(\s|\.)/g, '_')
+
+                        handlers[id] = item[k]
+                        $container.delegate('#' + id, 'click', handlers[id])
+
+                        return (
+                            '<a id="' + id + '" href="javascript:" class="weui-btn weui-btn_primary">' + k + '</a>'
+                        )
+                    })
+                    .join('')
+
+                    html += '</div></div></div>'
+                })
+
+                $container.html(html)
+            })()
+        </script>
+        <script>
+            new CRD().init()
         </script>
     </body>
 </html>
