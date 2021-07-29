@@ -1,6 +1,8 @@
-import { program } from 'commander'
-import { version } from '../package.json'
-import Server from '../server/app'
+#!/usr/bin/env node
+
+const { program } = require('commander')
+const { version } = require('../package.json')
+const Server = require('../dist/server.runtime.min')
 
 program.version(version)
 
@@ -13,14 +15,14 @@ program
         parseInt
     )
     .action(({ port = 9222 }) => {
-        new Server({ port }).start().openBoard()
+        new Server.default({ port }).start().openBoard()
     })
 
 program
     .command('version')
     .description('crd version')
     .action(() => {
-        console.log(`v${version}`)
+        console.log('v' + version)
     })
 
 program

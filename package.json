@@ -10,30 +10,27 @@
         "url": "https://github.com/mnichangxin/chrome-remote-debugger.git"
     },
     "bin": {
-        "crd": "bin/crd.sh"
+        "crd": "bin/cli.js"
     },
     "scripts": {
+        "dev": "npm run build:dev && npm run server",
+        "prod": "npm run build:prod && cross-env RUN_ENV=deploy pm2 dist/server.runtime.min.js",
+        "server": "cross-env RUN_ENV=server nodemon server/app.js --exec babel-node",
+        "server:cli": "npm run build:dev && npm link && crd start",
         "clean": "rimraf -rf dist",
-        "dev": "npm run build:dev && npm run server:dev",
-        "server:dev": "nodemon server/app.js --mode=dev --exec babel-node",
-        "build:dev": "npm run clean && rollup --config scripts/build.dev.js",
-        "build:prod": "npm run clean && rollup --config scripts/build.prod.js",
-        "build": "npm run clean && rollup --config scripts/build.dev.js && rollup --config scripts/build.prod.js"
+        "build:dev": "npm run clean && webpack --config scripts/webpack.dev.js",
+        "build:prod": "npm run clean && webpack --config scripts/webpack.prod.js"
     },
     "dependencies": {
-        "@mnichangxin/chobitsu": "^0.1.0",
         "chrome-devtools-frontend": "1.0.707746",
         "commander": "^8.0.0",
         "koa": "^2.13.1",
         "koa-bodyparser": "^4.3.0",
         "koa-logger": "^3.2.1",
         "koa-router": "^10.0.0",
-        "nanoid": "^3.1.23",
         "opener": "^1.5.2",
         "socket.io": "^4.0.1",
-        "socket.io-client": "^4.1.3",
-        "ws": "^7.4.5",
-        "xhr": "^2.6.0"
+        "ws": "^7.4.5"
     },
     "devDependencies": {
         "@babel/core": "^7.14.6",
@@ -42,15 +39,13 @@
         "@babel/plugin-syntax-class-properties": "^7.12.13",
         "@babel/plugin-transform-runtime": "^7.14.5",
         "@babel/preset-env": "^7.13.15",
-        "@rollup/plugin-babel": "^5.3.0",
-        "@rollup/plugin-commonjs": "^19.0.1",
-        "@rollup/plugin-node-resolve": "^13.0.2",
+        "babel-loader": "^8.2.2",
+        "cross-env": "^7.0.3",
         "nodemon": "^2.0.7",
         "rimraf": "^3.0.2",
-        "rollup": "^2.53.2",
-        "rollup-plugin-node-builtins": "^2.1.2",
-        "rollup-plugin-terser": "^7.0.2",
         "webpack": "^5.47.0",
-        "webpack-cli": "^4.7.2"
+        "webpack-cli": "^4.7.2",
+        "webpack-merge": "^5.8.0",
+        "webpack-node-externals": "^3.0.0"
     }
 }

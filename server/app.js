@@ -6,6 +6,7 @@ import KoaBodyParser from 'koa-bodyparser'
 import Logger from 'koa-logger'
 import IO from 'socket.io'
 import opener from 'opener'
+import routes from './routes'
 import StaticFile from './middlewares/staticFile'
 import Controller from './middlewares/controller'
 import SocketManage from './service/SocketManage'
@@ -19,7 +20,7 @@ export default class ServerApp {
     addMiddlewares() {
         const koaBodyParser = new KoaBodyParser()
         const logger = new Logger()
-        const controller = new Controller()
+        const controller = new Controller(routes)
         const app = this.app
 
         app.use(koaBodyParser)
@@ -93,5 +94,5 @@ export default class ServerApp {
     }
 }
 
-if (process.argv.indexOf('--mode=dev') > -1)
+if (process.env.RUN_ENV === 'server' || process.env.RUN_ENV === 'deploy')
     new ServerApp({ port: 9222 }).start().openBoard()

@@ -1,6 +1,3 @@
-import fs from 'fs'
-import path from 'path'
-
 const addMapping = (router, mapping) => {
     const SUPPORT_METHODS = ['all', 'get', 'post', 'put', 'delete', 'options']
 
@@ -17,22 +14,11 @@ const addMapping = (router, mapping) => {
         }
     }
 }
-const addControllers = (router, routesDir) => {
-    const routesPath = path.resolve(__dirname, '../', routesDir)
-    const files = fs.readdirSync(routesPath)
-    const routeFiles = files.filter(f => f.endsWith('.js') || f.endsWith('.ts'))
 
-    routeFiles.forEach(fileName => {
-        const mapping = require(path.resolve(routesPath, fileName)).default
-        addMapping(router, mapping)
-    })
-}
-
-export default dir => {
-    const routesDir = dir || 'routes'
+export default (routes = {}) => {
     const router = require('koa-router')()
 
-    addControllers(router, routesDir)
+    addMapping(router, routes)
 
     return async (ctx, next) => {
         await router.routes()(ctx, next)

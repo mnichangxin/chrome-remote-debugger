@@ -37,19 +37,19 @@ Debugging page must import our SDK to your page. The SDK supports three import m
 Import as `ESM` or `CJS` , then install package by npm:
 
 ```sh
-    yarn add @chrome-remote-debugger/client
+    yarn add chrome-remote-debugger-client
 ```
 
 1. ESM:
 
 ```js
-    import CRD from '@chrome-remote-debugger/client'
+    import CRD from 'chrome-remote-debugger-client'
 ```
 
 2. CJS
 
 ```js
-    const CRD = require('@chrome-remote-debugger/client')
+    const CRD = require('chrome-remote-debugger-client')
 ```
 
 3. UMD
@@ -64,8 +64,6 @@ Then you can new a instance to use it:
     new CRD([options]).init()
 ```
 
-## SDK Options
+## SDK More
 
-* `pid`: Page unique identification, generate autoing when no setting
-
-* `wsHost`: Be registered server address, include `host` and `port`. Generate by local host when no setting. Also, using a query param `remoteServer` cover this setting. For example: `http://10.253.32.115:9222/test/demo.html?remoteServer=10.253.32.115:9222`
+[Chrome Remote Debugger Client](https://github.com/mnichangxin/chrome-remote-debugger-client/blob/master/README.md)

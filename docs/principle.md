@@ -10,7 +10,7 @@
 
 `Chrome DevTools` 的架构，相当于前后端分离的架构，用一张图来描述就是：
 
-![](./assets/1.png)
+![](./assets/principle-1.png)
 
 具体可以划分为调试器的前端和调试器的后端：
 
@@ -30,7 +30,7 @@
 ```
 2. `Chrome` 启动后，打开调试工具在设置中开启 `Protocol monitor`，也就是 `CDP` 监控工具，之后可以看到 `CDP` 的调用情况：
 
-![](./assets/2.png)
+![](./assets/principle-2.png)
 
 图中清晰的展示了 `CDP` 的请求和响应，下面介绍下 `CDP`：
 
@@ -66,7 +66,7 @@
 
 我们设想了大致的一个模型，`SDK-Server-Chrome DevTools` 的一整套转发流程，整体需要我们实现的分为 `SDK` 和 `Server`，`Chrome DevTools` 有官方开源的库 [devtools-frontend](https://github.com/ChromeDevTools/devtools-frontend)
 
-![](./assets/3.png)
+![](./assets/principle-3.png)
 
 下面是具体的实现
 
