@@ -2,7 +2,7 @@
     "name": "chrome-remote-debugger",
     "version": "0.1.0",
     "description": "To debugging web page by Chrome DevTools Protocol",
-    "main": "server/app.js",
+    "main": "dist/server.runtime.min.js",
     "author": "mnichangxin@163.com",
     "license": "MIT",
     "repository": {
