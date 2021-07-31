@@ -42,7 +42,7 @@
 
         platList.forEach(function(plat) {
             platInfoStr +=
-                '<li class="page-plat-item">' +
+                '<li class="page-plat-item" onclick="alert(\'' + page.metaData.userAgent + '\')">' +
                 renderPagePlatInfoItem(plat, pagePlat) +
                 '</li>'
         })

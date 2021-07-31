@@ -37,8 +37,8 @@ export default class SocketManage {
     }
     jsonForPages() {
         return this.pages.map(page => {
-            const { pid, wsHost, metaData } = page
-            const devtoolsPath = `${wsHost}/devtools/page/${pid}`
+            const { pid, wsOrigin, metaData } = page
+            const devtoolsPath = `${wsOrigin}/devtools/page/${pid}`
             return {
                 pid,
                 metaData,

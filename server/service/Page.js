@@ -4,7 +4,7 @@ import SocketManage from './SocketManage'
 export default class Page {
     constructor(ioServer, params) {
         this.pid = ''
-        this.wssHost = ''
+        this.wsOrigin = ''
         this.metaData = {}
         this.buffer = []
         this.ws = null

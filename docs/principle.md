@@ -278,8 +278,8 @@
         }
         jsonForPages() {
             return this.pages.map(page => {
-                const { pid, title, url, wsHost } = page
-                const devtoolsPath = `${wsHost}/devtools/page/${pid}`
+                const { pid, title, url, wsOrigin } = page
+                const devtoolsPath = `${wsOrigin}/devtools/page/${pid}`
                 return {
                     pid,
                     title,
@@ -323,12 +323,12 @@ SDK 的关键实现如下，主要是控制转发的逻辑：
 ```js
     class  RemoteDebugger {
         async inspectorPage() {
-            const url = `//${getWsUrlOrigin(this.wsHost)}/register`
+            const url = `//${getWsUrlOrigin(this.wsOrigin)}/register`
             const requestData = {
                 pid: this.pid,
                 title: this.title,
                 url: this.url,
-                wsHost: this.wsHost
+                wsOrigin: this.wsOrigin
             }
             const [err, res] = await to(
                 request({
@@ -374,7 +374,7 @@ SDK 的关键实现如下，主要是控制转发的逻辑：
             this.socket.on('cdp', this.dispatch.bind(this))
         }
         connectSocket() {
-            const wsUrlOrigin = getWsUrlOrigin(this.wsHost)
+            const wsUrlOrigin = getWsUrlOrigin(this.wsOrigin)
             const socket = io(`ws://${wsUrlOrigin}/devtools/page/${this.pid}`)
             this.socket = socket
             this.initSocketEvent()

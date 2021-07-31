@@ -4,14 +4,17 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Chrome Remote Debugger</title>
+        <link rel="dns-prefetch" href="//cdn.bootcdn.net">
         <link rel="icon" href="favicon.ico" type="image/x-icon" />
         <link rel="stylesheet" href="./static/iconfont/iconfont.css" type="text/css" />
         <link rel="stylesheet" href="./static/home.css" type="text/css" />
         <script
+            defer
             type="text/javascript"
             src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"
         ></script>
         <script
+            defer
             type="text/javascript"
             src="https://cdn.bootcdn.net/ajax/libs/socket.io/4.0.1/socket.io.min.js"
         ></script>
@@ -29,7 +32,7 @@
                 <ul class="tips">
                     <li class="tip-item"><span class="tip-num">1</span>引用 SDK 到调试页面，SDK 提供 UMD、CJS、ESM 三种引用方式</li>
                     <li class="tip-item"><span class="tip-num">2</span>访问被调试的页面，本页面出现调试项点击即可调试</li>
-                    <li class="tip-item"><span class="tip-num">3</span><a target="_blank" href="/test/demo.html">测试demo</a> 和 <a target="_blank" href="https://github.com/mnichangxin/chrome-remote-debugger/blob/master/README.md">使用文档</a></li>
+                    <li class="tip-item"><span class="tip-num">3</span><a target="_blank" href="/test/demo.html">测试demo</a> 和 <a target="_blank" href="https://github.com/mnichangxin/chrome-remote-debugger">使用文档</a></li>
                 </ul>
                 <div class="list-container">
                     <ul class="page-list"></ul>
@@ -37,6 +40,6 @@
                 </div>
             </section>
         </div>
-        <script type="text/javascript" src="./static/home.js"></script>
+        <script defer type="text/javascript" src="./static/home.js"></script>
     </body>
 </html>

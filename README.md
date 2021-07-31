@@ -66,4 +66,4 @@ Then you can new a instance to use it:
 
 ## SDK More
 
-[Chrome Remote Debugger Client](https://github.com/mnichangxin/chrome-remote-debugger-client/blob/master/README.md)
+[Chrome Remote Debugger Client](https://github.com/mnichangxin/chrome-remote-debugger-client)
