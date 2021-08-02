@@ -5,9 +5,9 @@ To debugging web page by Chrome DevTools Protocol.
 ## Install
 
 ```sh
-    yarn global add chrome-remote-debugger
-    # OR
-    npm install chrome-remote-debugger -g
+yarn global add chrome-remote-debugger
+# OR
+npm install chrome-remote-debugger -g
 ```
 
 ## Usage
@@ -15,13 +15,13 @@ To debugging web page by Chrome DevTools Protocol.
 ### Start
 
 ```sh
-    crd start
+crd start
 ```
 
 The tool will start on port `9222` by default. If you want to set port, then use `-p` or `--port` short args:
 
 ```sh
-    crd start [-p, --port <port>]
+crd start [-p, --port <port>]
 ```
 
 ### Open Board
@@ -30,40 +30,42 @@ The board UI start autoing at browser when you use start command.
 
 ![](./docs/assets/start-board.png)
 
-### Import to SDK to your page
+### Import to client to your page
 
-Debugging page must import our SDK to your page. The SDK supports three import methods.
+Debugging page must import our client to your page. The client supports three import mode.
 
 Import as `ESM` or `CJS` , then install package by npm:
 
 ```sh
-    yarn add chrome-remote-debugger-client
+yarn add chrome-remote-debugger-client
+# OR
+npm install chrome-remote-debugger-client --save
 ```
 
-1. ESM:
+* **ESM**:
 
 ```js
-    import CRD from 'chrome-remote-debugger-client'
+import CRD from 'chrome-remote-debugger-client'
 ```
 
-2. CJS
+* **CJS**
 
 ```js
-    const CRD = require('chrome-remote-debugger-client')
+const CRD = require('chrome-remote-debugger-client')
 ```
 
-3. UMD
+* **UMD**
 
 ```html
-    <script type="text/javascript" src="crd.umd.min.js"></script>
+<script type="text/javascript" src="crd.umd.min.js"></script>
 ```
 
 Then you can new a instance to use it:
 
 ```js
-    new CRD([options]).init()
+new CRD([options]).init()
 ```
 
-## SDK More
+## About Client
 
-[Chrome Remote Debugger Client](https://github.com/mnichangxin/chrome-remote-debugger-client)
+The supporting client in another warehouse is [Chrome Remote Debugger Client](https://github.com/mnichangxin/chrome-remote-debugger-client)
