@@ -1,4 +1,5 @@
 import WebSocket from 'ws'
+import chalk from 'chalk'
 import SocketManage from './SocketManage'
 
 export default class Page {
@@ -28,23 +29,33 @@ export default class Page {
         this.socket.on('cdp', this.forwardToDevTools.bind(this))
         this.socket.on('disconnect', this.clientDisconnect.bind(this))
         SocketManage.getInstance().addPage(this)
-        console.log(`[pid: ${this.pid}] connect to ioServer...`)
+        console.log(
+            chalk.green(`[crd] pid: ${this.pid} connect to ioServer...`)
+        )
     }
     clientDisconnect() {
         this.ioServer.removeAllListeners()
         SocketManage.getInstance().removePage(this)
-        console.log(`[pid: ${this.pid}] disconnect to ioServer...`)
+        console.log(
+            chalk.green(`[crd] pid: ${this.pid} disconnect to ioServer...`)
+        )
     }
     devtoolsConnect() {
         this.devtoolsConnected = true
         this.ws.on('message', this.forwardToClient.bind(this))
         this.ws.on('close', this.devtoolsDisconnect.bind(this))
         this.flushBuffer()
-        console.log(`[pid: ${this.pid}] connect to Chrome DevTools...`)
+        console.log(
+            chalk.green(`[crd] pid: ${this.pid} connect to Chrome DevTools...`)
+        )
     }
     devtoolsDisconnect() {
         this.devtoolsConnected = false
-        console.log(`[pid: ${this.pid}] disconnect to Chrome DevTools...`)
+        console.log(
+            chalk.green(
+                `[crd] pid: ${this.pid} disconnect to Chrome DevTools...`
+            )
+        )
     }
     handleUpgrade(req, socket, head) {
         this.wsServer.handleUpgrade(req, socket, head, ws => {

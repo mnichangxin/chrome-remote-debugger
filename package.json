@@ -3,14 +3,19 @@
     "version": "0.1.0",
     "description": "To debugging web page by Chrome DevTools Protocol",
     "main": "dist/server.runtime.min.js",
+    "types": "types/index.d.ts",
     "author": "mnichangxin@163.com",
+    "keywords": [
+        "devtools",
+        "debugger"
+    ],
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/mnichangxin/chrome-remote-debugger.git"
     },
     "bin": {
-        "crd": "bin/cli.js"
+        "crd": "bin/crd"
     },
     "scripts": {
         "dev": "npm run build:dev && npm run server",
@@ -22,6 +27,7 @@
         "build:prod": "npm run clean && webpack --config scripts/webpack.prod.js"
     },
     "dependencies": {
+        "chalk": "^4.1.2",
         "chrome-devtools-frontend": "1.0.707746",
         "commander": "^8.0.0",
         "koa": "^2.13.1",

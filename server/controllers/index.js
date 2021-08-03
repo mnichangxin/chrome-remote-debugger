@@ -14,7 +14,7 @@ export const register = ctx => {
     if (pid) {
         ctx.body = {
             errNo: 1,
-            errStr: `pid: ${pid} already register`,
+            errStr: `[crd]: ${pid} already register`,
             data: null
         }
     } else {

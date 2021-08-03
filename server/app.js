@@ -6,6 +6,7 @@ import KoaBodyParser from 'koa-bodyparser'
 import Logger from 'koa-logger'
 import IO from 'socket.io'
 import opener from 'opener'
+import chalk from 'chalk'
 import routes from './routes'
 import StaticFile from './middlewares/staticFile'
 import Controller from './middlewares/controller'
@@ -88,7 +89,9 @@ export default class ServerApp {
             this.createServer()
             this.createSocketServer()
             this.listen()
-            console.log(`server start at port: ${this.getPort()}...`)
+            console.log(
+                chalk.blue(`[crd] server start at port: ${this.getPort()}...`)
+            )
         }
         return this
     }

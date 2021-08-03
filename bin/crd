@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 
 const { program } = require('commander')
+const chalk = require('chalk')
 const { version } = require('../package.json')
 const Server = require('../dist/server.runtime.min')
 
 program.version(version)
+
+program.command('banner').action(() => {
+    console.log(chalk.green('chrome-remote-debugger v' + version))
+})
 
 program
     .command('start')
@@ -22,7 +27,7 @@ program
     .command('version')
     .description('crd version')
     .action(() => {
-        console.log('v' + version)
+        console.log(chalk.green('v' + version))
     })
 
 program
@@ -37,6 +42,6 @@ const args = process.argv
 
 if (args[2] === '--help' || args[2] === '-h') args[2] = 'help'
 if (args[2] === '--version' || args[2] === '-v') args[2] = 'version'
-if (args.length === 2) args.push('version')
+if (args.length === 2) args.push('banner')
 
 program.parse(args)

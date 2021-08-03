@@ -1,3 +1,4 @@
+import chalk from 'chalk'
 import Page from './Page'
 
 export default class SocketManage {
@@ -16,7 +17,7 @@ export default class SocketManage {
         const pid = params.pid || ''
 
         if (this.pages.findIndex(page => page.pid === pid) > -1) {
-            console.log(`[pid: ${pid}] already register`)
+            console.log(chalk.green(`[crd] pid: ${pid} already register`))
             return pid
         } else {
             new Page(this.ioServer, params)
